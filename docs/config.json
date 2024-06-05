@@ -1,0 +1,32 @@
+{
+  "docs": [
+    {
+      "uuid": "f5da49d1-a66b-40f0-ad03-6b35fe8bc47a",
+      "slug": "installation",
+      "path": "docs/INSTALLATION.md",
+      "title": "Installing Phix locally",
+      "blurb": "Learn how to install Phix locally to solve Exercism's exercises on your own machine"
+    },
+    {
+      "uuid": "485eb6e9-cc78-45c0-be1e-5ffc67acb0a5",
+      "slug": "learning",
+      "path": "docs/LEARNING.md",
+      "title": "How to learn Phix",
+      "blurb": "An overview of how to get started from scratch with Phix"
+    },
+    {
+      "uuid": "e1d6d2b0-2f8b-43fe-98bf-06680f8ff395",
+      "slug": "tests",
+      "path": "docs/TESTS.md",
+      "title": "Testing on the Phix track",
+      "blurb": "Learn how to test your Phix exercises on Exercism"
+    },
+    {
+      "uuid": "184642b1-dfd5-4e89-9243-f93f206f00b5",
+      "slug": "resources",
+      "path": "docs/RESOURCES.md",
+      "title": "Useful Phix resources",
+      "blurb": "A collection of useful resources to help you master Phix"
+    }
+  ]
+}
