@@ -30,7 +30,7 @@ jobs:
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29
 
       - name: Setup Phix
-        uses: phix/.github/bin/setup-phix
+        uses: /.github/bin/setup-phix
         env:
           PHIX_VERSION: 1.0.5
 #         PHIX_SHA: 57179171dbed    # ??
