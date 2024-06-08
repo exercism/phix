@@ -6,3 +6,4 @@ bin/configlet.exe
 /bin/backup
 /exercises/practice/hello-world/.meta/backup
 /exercises/practice/hello-world/backup
+/.github/workflows/backup
