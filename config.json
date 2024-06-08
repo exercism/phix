@@ -8,7 +8,7 @@
     "representer": false,
     "analyzer": false
   },
-  "blurb": "Phix is a remarkably simple yet full-featured programming language with clear syntax and plain English errors. It was the first in which 100% of all rosettacode tasks were completed, still one of only two. A hybrid interpreter/compiler/transpiler approach allows a fast development cycle, and native executables for Windows and Linux, and html/js/css for running in a web browser.",
+  "blurb": "Phix is a remarkably simple yet full-featured programming language with clear syntax and plain English errors. First to complete rosettacode. A hybrid interpreter/compiler/transpiler allows a fast edit/run, shipping native executables, and html/js/css for a web browser.",
   "version": 3,
   "online_editor": {
     "indent_style": "space",
@@ -23,9 +23,6 @@
     ],
     "example": [
       ".meta/example.e"
-    ],
-    "exemplar": [
-      ".meta/exemplar.e"
     ]
   },
   "exercises": {
