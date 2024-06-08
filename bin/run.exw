@@ -1,0 +1,127 @@
+﻿requires("1.0.5") -- (assert(a&b&c) bug, -nopause)
+without trace
+include builtins/json.e 
+
+procedure process()
+    sequence cl = command_line()
+    integer cll = length(cl)
+    if cll<3 then
+//      -- maybe: if length 5, use 'em, as commented out below:
+//      puts(1, "usage: p ./bin/run.exw exercise-slug path/to/solution/folder/ path/to/output/directory/\n")
+        -- (this might want a[n optional] -nopause too - which won't be in cl btw)
+        puts(1, "usage: p ./bin/run.exw path/to/exercise/folder/\n")
+        return
+    end if
+    string exercise_folder = cl[3],             -- eg exercism/phix/exercises/practice/acronym
+//  string exercise_folder = cl[3+(cll=5)],     -- eg exercism/phix/exercises/practice/acronym
+           slug = get_file_base(exercise_folder),   -- eg acronym
+//         slug = iff(cll=5?cl[3]:get_file_base(exercise_folder)),  -- eg acronym
+           sol_dir = get_proper_path(exercise_folder),
+           out_dir = iff(platform()=WINDOWS?getenv("TMP"):"/tmp"),
+//         out_dir = iff(cll=5?cl[5]:iff(platform()=WINDOWS?getenv("TMP"):"/tmp")),
+           lib_dir = join_path({sol_dir, "lib"}),
+           tmp_dir = join_path({out_dir, slug}),
+           meta_src = join_path({sol_dir, ".meta", "example.e"}),
+           temp_src = join_path({tmp_dir, slug & ".e"}),
+           test_src = join_path({sol_dir, "test.exw"}),
+           temp_lib = join_path({tmp_dir, "lib"}),
+           out_file = join_path({tmp_dir, "t_" & slug & ".out"}),
+           res_file = join_path({out_dir, "results.json"})
+
+    if get_file_type(sol_dir)!=FILETYPE_DIRECTORY  then
+        crash(sol_dir&" does not exist or is is not a directory")
+    end if
+    if not file_exists(out_dir) then
+        assert(create_directory(out_dir),"cannot create directory "&out_dir)
+    end if
+    if not file_exists(tmp_dir) then
+        assert(create_directory(tmp_dir),"cannot create directory "&tmp_dir)
+    end if
+
+    printf(1, "%s: testing...", {slug})
+    assert(copy_file(meta_src,temp_src,true),"cannot copy "&meta_src&" to "&temp_src)
+    assert(copy_file(test_src,tmp_dir,true),"cannot copy "&test_src&" to "&tmp_dir)
+
+    if file_exists(lib_dir) then
+        assert(copy_directory(lib_dir,temp_lib,true),"cannot copy "&lib_dir&" to "&temp_lib)
+    end if
+        
+    if file_exists(out_file) then
+        assert(delete_file(out_file),"cannot delete "&out_file)
+    end if
+
+--  string cmd = sprintf(`p %s/test`, {tmp_dir, out_file})
+--  string cmd = sprintf(`p %s/test > "%s" 2>&1`, {tmp_dir, out_file})
+--X string cmd = sprintf(`p -batch %s/test > "%s" 2>&1`, {tmp_dir, out_file})
+    string cmd = sprintf(`p -nopause %s/test > "%s" 2>&1`, {tmp_dir, out_file})
+--?cmd
+    integer res = system_exec(cmd,4) -- (4 === result/wait and redirect/builtin)
+
+    sequence lines = get_text(out_file,GT_LF_STRIPPED)
+    
+    -- Quick cleanup (entirely optional)
+    assert(delete_file(out_file),"cannot delete "&out_file)
+    assert(remove_directory(tmp_dir,true),"cannot delete "&tmp_dir)
+
+    string status = "pass", message = ""
+
+--printf(1,"DATA:\n%s\n",{join(lines,"<\n")})
+    integer begins_hat = 0, begins_3 = 0, crashmsg = false
+    for i,l in lines do
+        if begins_hat=0
+        and begins("^",trim_head(l)) then
+            begins_hat = i
+        elsif begins("... called from ",l)
+          or begins("...included by ",l)
+         or begins("Global & Local Variables",l) then
+            begins_3 = i-1
+            exit
+        elsif match("passed: ",l) then
+            lines[i] = ""
+        elsif i=5 and begins("--> see ",l) then
+            crashmsg = true
+            exit
+        end if
+    end for
+    if crashmsg then
+        status = "error"
+        message = lines[3]
+    elsif begins_3
+       or begins_hat then
+        -- compilation error
+        status = "error"
+        if begins_3=0 then begins_3 = begins_hat end if
+        -- We might want to limit this to, say, 8 lines?
+        message = join(filter(lines[1..begins_3],"!=",""),'\n')
+    else
+        -- check for unit test errors or success
+        integer first_failure = 0
+        lines = filter(lines,"!=","")
+        for i,l in lines do
+            if match("100% success", l) then exit end if // all good
+            if match("% success", l) then // < 100% then...
+                status = "fail"
+                if first_failure==0 then first_failure = i end if
+                message = trim(lines[first_failure])
+                exit
+            end if
+            if first_failure==0 and match("failed:", l) then
+                first_failure = i
+            end if
+        end for
+    end if
+    // if status is still "pass" then res //must// be 0, shirley:
+    assert(status!="pass" or res==0,"pass with res=%d??",{res})
+    
+    sequence json = {JSON_OBJECT, {"version", 1}, {"status", status}, {"message", message}}
+    integer ofn = open(res_file,"w")
+    object pjres = print_json(ofn, json) -- (separate line so available for debugging)
+    assert(pjres!=0,"bad json??")
+    close(ofn)
+--temp:
+{} = print_json(1,json)
+
+end procedure
+
+process()
+

@@ -8,23 +8,95 @@
     "representer": false,
     "analyzer": false
   },
-  "blurb": "TODO: add blurb",
+  "blurb": "Phix is a remarkably simple yet full-featured programming language with clear syntax and plain English errors. It was the first in which 100% of all rosettacode tasks were completed, still one of only two. A hybrid interpreter/compiler/transpiler approach allows a fast development cycle, and native executables for Windows and Linux, and html/js/css for running in a web browser.",
   "version": 3,
   "online_editor": {
     "indent_style": "space",
-    "indent_size": 4
+    "indent_size": 2
+    "highlightjs_language": "phix"
   },
   "files": {
-    "solution": [],
-    "test": [],
-    "example": [],
-    "exemplar": []
+    "solution": [
+      "%{kebab_slug}.e"
+    ],
+    "test": [
+      "test.exw"
+    ],
+    "example": [
+      ".meta/example.e"
+    ],
+    "exemplar": [
+      ".meta/exemplar.e"
+    ]
   },
   "exercises": {
     "concept": [],
-    "practice": []
+    "practice": [
+      {
+        "slug": "hello-world",
+        "name": "Hello World",
+        "uuid": "8fae0957-3dc0-4db1-8609-a7087d0126d1",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      }
+    ]
   },
   "concepts": [],
-  "key_features": [],
-  "tags": []
+  "key_features": [
+    {
+      "title": "Safe",
+      "content": "Extensive error checking with full descriptions, stack trace, and a dump of variable values.",
+      "icon": "safe"
+    },
+    {
+      "title": "Cross-platform",
+      "content": "Phix programs run under Windows, Linux, and any platform with a web browser.",
+      "icon": "cross-platform"
+    },
+    {
+      "title": "Expressive",
+      "content": "Routines are naturally generic, allowing for flexibility in handling different data types.",
+      "icon": "expressive"
+    },
+    {
+      "title": "Easy",
+      "content": "A remarkably simple, flexible, powerful language definition that is easy to learn and use.",
+      "icon": "easy"
+    },
+    {
+      "title": "Fast",
+      "content": "A high-performance interpreter, and compilation to native binaries.",
+      "icon": "fast"
+    },
+    {
+      "title": "Documentation",
+      "content": "Documentation is extensive, making it easy to get started with Phix.",
+      "icon": "documentation"
+    }
+  ],
+  "tags": [
+    "execution_mode/compiled",
+    "execution_mode/interpreted",
+    "paradigm/imperative",
+    "paradigm/procedural",
+    "platform/linux",
+    "platform/windows",
+    "runtime/standalone_executable",
+    "typing/dynamic",
+    "typing/static",
+    "typing/strong",
+    "typing/weak",
+    "used_for/backends",
+    "used_for/cross_platform_development",
+    "used_for/embedded_systems",
+    "used_for/financial_systems",
+    "used_for/frontends",
+    "used_for/games",
+    "used_for/guis",
+    "used_for/robotics",
+    "used_for/scientific_calculations",
+    "used_for/scripts",
+    "used_for/web_development"
+  ]
 }

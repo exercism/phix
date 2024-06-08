@@ -1,0 +1,1446 @@
+--
+-- phix_test_generator.exw
+-- =======================
+--
+--constant prob_spec_dir = `F:\misc\phix\problem-specifications` -- (an xpEditor setting)
+constant exercise_specs = `F:\misc\phix\problem-specifications\exercises\`
+-- canonicalDataURL = "https://raw.githubusercontent.com/exercism/problem-specifications/master/exercises/%s/canonical-data.json"
+constant phix_exercises = `F:\misc\phix\phix\exercises\practice\` -- ("")
+
+include sets.e
+--with trace
+include json.e
+
+function xyd(sequence json) // for robot-simulator
+    assert(json[1]=JSON_OBJECT)
+    sequence posn = extract_json_field(json,"position")
+    integer x = extract_json_field(posn,"x"),
+            y = extract_json_field(posn,"y")
+    string dstr = extract_json_field(json,"direction")
+    return {x,y,dstr}
+end function
+
+function rm2(sequence json) // for flatten-array
+    -- recursively remove all JSON_ARRAY and
+    -- replace any {-3,`null`} with -1
+    if json={-3,`null`} then return -1 end if
+    assert(json[1]=JSON_ARRAY)
+    json = json[2..$]
+    for i,j in json do
+        if sequence(j) then json[i] = rm2(j) end if
+    end for
+    return json
+end function
+
+function kg_extract(sequence jo) // for kindergarten-garden
+    sequence input = extract_json_field(jo,"input"),
+          expected = extract_json_field(jo,"expected")[2..$]
+    string diagram = extract_json_field(input,"diagram"),
+           student = extract_json_field(input,"student"),
+              desc = extract_json_field(jo,"description")
+    return sprintf("{%v,%v,%v,%v},\n",{diagram,student,expected,desc})
+end function
+
+function pov_tree(sequence json) // for pov
+    string label = extract_json_field(json,"label")
+--  if no children then
+--      return label
+--  end if
+    sequence children = {},
+             cj = extract_json_field(json,"children",{0})//[2..$]
+    for c in cj from 2 do
+        children = append(children,pov_tree(c))
+    end for
+    children = sort(children)
+    return {label,children}
+end function
+
+-- Exercises that involve calling different routines in a specific order, threads, etc.
+--  are generally best done "by hand", this is more for call the one routine 138 ways.
+--  One exception is custom-set.
+
+bool bAddBOM = false
+
+function generate_tests(string slug, sequence json)
+    string res = "", desc, what, what2
+    assert(extract_json_field(json,"exercise")==slug)
+    sequence cases = extract_json_field(json,"cases"),
+             jo,jg, inner_cases
+    assert(cases[1]=JSON_ARRAY)
+
+    -- merge what you can, try and keep similar-ish signatures (rhs comments) in
+    -- some semblance of order, since that's more useful than, say, alphabetical
+    -- ordering by slug name would be, and it helps to keep similar code nearby.
+    -- aside: note the heavy use of %v to preserve quotation marks
+    -- tip: if you want to see original input, deliberately mis-spell 
+    --      the slug name and reload it's canonical_data.e after run.
+    -- ps: don't blame me for this, I didn't design that json format
+    -- pps: no doubt oop-heads will have a fit over this, but one huge
+    --       switch is far easier than 140 scattered classes, imnsho..
+
+    integer k = find(slug,{`acronym`,`bob`,`crypto-square`,`markdown`,
+                           `rna-transcription`,`phone-number`}),
+           k2 = find(slug,{`pig-latin`,`run-length-encoding`}),
+           k3 = find(slug,{`book-store`,`bowling`}),
+           k4 = find(slug,{`sum-of-multiples`,`binary-search`}),
+           k5 = find(slug,{`sieve`,`prime-factors`}),
+           k6 = find(slug,{`spiral-matrix`,`pascals-triangle`}),
+           k7 = find(slug,{`space-age`,`largest-series-product`}),
+           k8 = find(slug,{`isbn-verifier`,`isogram`,`luhn`,
+                           `matching-brackets`,`pangram`}),
+           k9 = find(slug,{`collatz-conjecture`,`eliuds-eggs`,
+                           `square-root`,`nth-prime`}),
+           kA = find(slug,{`transpose`,`proverb`,`tournament`})
+
+    if k then                                                                   -- string input, expected, description format:
+        what = {`phrase`,`heyBob`,`plaintext`,`markdown`,`dna`,`phrase`}[k]
+        for jo in cases from 2 do
+            sequence joi = extract_json_field(jo,"input"),
+                  expect = extract_json_field(jo,"expected")
+            if not string(expect) then
+                expect = extract_json_field(expect,"error")
+            end if
+            string input = extract_json_field(joi,what)
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%v,%v,%v},\n",{input,expect,desc})
+        end for
+    elsif slug="zebra-puzzle" then                                              -- string property, expected, desc
+        for jo in cases from 2 do
+            string property = extract_json_field(jo,"property"),
+                     expect = extract_json_field(jo,"expected")
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%v,%v,%v},\n",{property,expect,desc})
+        end for
+    elsif k2 then                                                               -- string phrase, expected, desc; with extra nesting flattened
+        what = {`phrase`,`string`}[k2]
+        if slug=`run-length-encoding` then 
+            cases[3..3] = {} -- (replicated encode/decode)
+        end if
+        for jg in cases from 2 do
+            inner_cases = extract_json_field(jg,"cases")
+            for jo in inner_cases from 2 do
+                sequence input = extract_json_field(jo,"input")
+                string phrase = extract_json_field(input,what),
+                     expected = extract_json_field(jo,"expected")
+                desc = extract_json_field(jo,"description")
+                res &= sprintf("{%v,%v,%v},\n",{phrase,expected,desc})
+            end for
+        end for
+    elsif slug="kindergarten-garden" then                                       -- string diagram, student, []string expected, string desc; 
+        for jg in cases from 2 do                                               --  with extra nested flattened nesting flattened(!)
+            inner_cases = extract_json_field(jg,"cases")
+            for jo in inner_cases from 2 do
+                if length(jo)=3 then -- cases within cases within cases...
+                    sequence iic = extract_json_field(jo,"cases")
+                    for ji in iic from 2 do
+                        res &= kg_extract(ji)
+                    end for
+                else
+                    res &= kg_extract(jo)
+                end if
+            end for
+        end for
+    elsif slug="twelve-days" then                                               -- int first, last, []string expected, string desc; 
+        for jg in cases from 2 do                                               --  with extra nesting flattened
+            inner_cases = extract_json_field(jg,"cases")
+            for jo in inner_cases from 2 do
+                sequence input = extract_json_field(jo,"input"),
+                      expected = extract_json_field(jo,"expected")[2..$]
+                integer first = extract_json_field(input,"startVerse"),
+                         last = extract_json_field(input,"endVerse")
+                desc = extract_json_field(jo,"description")
+                expected = join(expected,",\n",fmt:="`%s`")
+                res &= sprintf("{%d,%d,{%s},%v},\n",{first,last,expected,desc})
+            end for
+        end for
+    elsif slug="atbash-cipher" then                                             -- string phrase, expected, desc; with extra nesting flipped
+        -- didn't get this to work, in the end (this output is fine, just not used)
+        for j,jg in cases from 2 do
+            inner_cases = extract_json_field(jg,"cases")
+            for jo in inner_cases from 2 do
+                sequence input = extract_json_field(jo,"input")
+                string phrase = extract_json_field(input,"phrase"),
+                     expected = extract_json_field(jo,"expected")
+                if j=3 then {phrase,expected} = {expected,phrase} end if
+                desc = extract_json_field(jo,"description")
+                res &= sprintf("{%v,%v,%v},\n",{phrase,expected,desc})
+            end for
+        end for
+    elsif slug="rail-fence-cipher" then                                         -- string phrase, integer rails, string expected, desc; with extra nesting flipped
+        for j,jg in cases from 2 do
+            inner_cases = extract_json_field(jg,"cases")
+            for jo in inner_cases from 2 do
+                sequence input = extract_json_field(jo,"input")
+                string msg = extract_json_field(input,"msg"),
+                  expected = extract_json_field(jo,"expected")
+                desc = extract_json_field(jo,"description")
+                if j=3 then {msg,expected} = {expected,msg} end if
+                integer rails = extract_json_field(input,"rails")
+                res &= sprintf("{%v,%d,%v,%v},\n",{msg,rails,expected,desc})
+            end for
+        end for
+    elsif slug="affine-cipher" then                                             -- string msg, integer a, b, string expected, desc; with extra nesting flattened
+        for j,jg in cases from 2 do
+            inner_cases = extract_json_field(jg,"cases")
+            for jo in inner_cases from 2 do
+                sequence input = extract_json_field(jo,"input"),
+                           key = extract_json_field(input,"key")
+                integer a = extract_json_field(key,"a"),
+                        b = extract_json_field(key,"b")
+                string msg = extract_json_field(input,"phrase")
+--                property = extract_json_field(jo,"property")
+                object expect = extract_json_field(jo,"expected")
+                if not string(expect) then
+                    expect = extract_json_field(expect,"error")
+                end if
+--              if property="decode" then
+--                  {msg,expected} = {expected,msg}
+--              end if
+                desc = extract_json_field(jo,"description")
+--              if j=3 and expect!="a and m must be coprime." then
+--                  {msg,expect} = {expect,msg}
+--              end if
+                res &= sprintf("{%v,%d,%d,%v,%v},\n",{msg,a,b,expect,desc})
+            end for
+        end for
+--/*
+{
+  "exercise": "affine-cipher",
+  "cases": [
+    {
+      "cases": [
+        {
+          "uuid": "2ee1d9af-1c43-416c-b41b-cefd7d4d2b2a",
+          "description": "encode yes",
+          "property": "encode",
+          "input": {
+            "phrase": "yes",
+            "key": {
+              "a": 5,
+              "b": 7
+            }
+          },
+          "expected": "xbt"
+        },
+        {
+          "uuid": "785bade9-e98b-4d4f-a5b0-087ba3d7de4b",
+          "description": "encode no",
+          "property": "encode",
+          "input": {
+            "phrase": "no",
+            "key": {
+              "a": 15,
+              "b": 18
+            }
+          },
+          "expected": "fu"
+        },
+        {
+          "uuid": "2854851c-48fb-40d8-9bf6-8f192ed25054",
+          "description": "encode OMG",
+          "property": "encode",
+          "input": {
+            "phrase": "OMG",
+            "key": {
+              "a": 21,
+              "b": 3
+            }
+          },
+          "expected": "lvz"
+        },
+        {
+          "uuid": "bc0c1244-b544-49dd-9777-13a770be1bad",
+          "description": "encode O M G",
+          "property": "encode",
+          "input": {
+            "phrase": "O M G",
+            "key": {
+              "a": 25,
+              "b": 47
+            }
+          },
+          "expected": "hjp"
+        },
+        {
+          "uuid": "381a1a20-b74a-46ce-9277-3778625c9e27",
+          "description": "encode mindblowingly",
+          "property": "encode",
+          "input": {
+            "phrase": "mindblowingly",
+            "key": {
+              "a": 11,
+              "b": 15
+            }
+          },
+          "expected": "rzcwa gnxzc dgt"
+        },
+        {
+          "uuid": "6686f4e2-753b-47d4-9715-876fdc59029d",
+          "description": "encode numbers",
+          "property": "encode",
+          "input": {
+            "phrase": "Testing,1 2 3, testing.",
+            "key": {
+              "a": 3,
+              "b": 4
+            }
+          },
+          "expected": "jqgjc rw123 jqgjc rw"
+        },
+        {
+          "uuid": "ae23d5bd-30a8-44b6-afbe-23c8c0c7faa3",
+          "description": "encode deep thought",
+          "property": "encode",
+          "input": {
+            "phrase": "Truth is fiction.",
+            "key": {
+              "a": 5,
+              "b": 17
+            }
+          },
+          "expected": "iynia fdqfb ifje"
+        },
+        {
+          "uuid": "c93a8a4d-426c-42ef-9610-76ded6f7ef57",
+          "description": "encode all the letters",
+          "property": "encode",
+          "input": {
+            "phrase": "The quick brown fox jumps over the lazy dog.",
+            "key": {
+              "a": 17,
+              "b": 33
+            }
+          },
+          "expected": "swxtj npvyk lruol iejdc blaxk swxmh qzglf"
+        },
+        {
+          "uuid": "0673638a-4375-40bd-871c-fb6a2c28effb",
+          "description": "encode with a not coprime to m",
+          "property": "encode",
+          "input": {
+            "phrase": "This is a test.",
+            "key": {
+              "a": 6,
+              "b": 17
+            }
+          },
+          "expected": {
+            "error": "a and m must be coprime."
+          }
+        }
+      ]
+    },
+    {
+      "description": "decode",
+      "comments": ["Test decoding from ciphertext to English with keys"],
+      "cases": [
+        {
+          "uuid": "3f0ac7e2-ec0e-4a79-949e-95e414953438",
+          "description": "decode exercism",
+          "property": "decode",
+          "input": {
+            "phrase": "tytgn fjr",
+            "key": {
+              "a": 3,
+              "b": 7
+            }
+          },
+          "expected": "exercism"
+        },
+        {
+          "uuid": "241ee64d-5a47-4092-a5d7-7939d259e077",
+          "description": "decode a sentence",
+          "property": "decode",
+          "input": {
+            "phrase": "qdwju nqcro muwhn odqun oppmd aunwd o",
+            "key": {
+              "a": 19,
+              "b": 16
+            }
+          },
+          "expected": "anobstacleisoftenasteppingstone"
+        },
+        {
+          "uuid": "33fb16a1-765a-496f-907f-12e644837f5e",
+          "description": "decode numbers",
+          "property": "decode",
+          "input": {
+            "phrase": "odpoz ub123 odpoz ub",
+            "key": {
+              "a": 25,
+              "b": 7
+            }
+          },
+          "expected": "testing123testing"
+        },
+        {
+          "uuid": "20bc9dce-c5ec-4db6-a3f1-845c776bcbf7",
+          "description": "decode all the letters",
+          "property": "decode",
+          "input": {
+            "phrase": "swxtj npvyk lruol iejdc blaxk swxmh qzglf",
+            "key": {
+              "a": 17,
+              "b": 33
+            }
+          },
+          "expected": "thequickbrownfoxjumpsoverthelazydog"
+        },
+        {
+          "uuid": "623e78c0-922d-49c5-8702-227a3e8eaf81",
+          "description": "decode with no spaces in input",
+          "property": "decode",
+          "input": {
+            "phrase": "swxtjnpvyklruoliejdcblaxkswxmhqzglf",
+            "key": {
+              "a": 17,
+              "b": 33
+            }
+          },
+          "expected": "thequickbrownfoxjumpsoverthelazydog"
+        },
+        {
+          "uuid": "58fd5c2a-1fd9-4563-a80a-71cff200f26f",
+          "description": "decode with too many spaces",
+          "property": "decode",
+          "input": {
+            "phrase": "vszzm    cly   yd cg    qdp",
+            "key": {
+              "a": 15,
+              "b": 16
+            }
+          },
+          "expected": "jollygreengiant"
+        },
+        {
+          "uuid": "b004626f-c186-4af9-a3f4-58f74cdb86d5",
+          "description": "decode with a not coprime to m",
+          "property": "decode",
+          "input": {
+            "phrase": "Test",
+            "key": {
+              "a": 13,
+              "b": 5
+            }
+          },
+          "expected": {
+            "error": "a and m must be coprime."
+          }
+        }
+      ]
+    }
+  ]
+}
+--*/
+    elsif k3 then                                                               -- []int input, int expected, string desc:
+        what = {"basket","previousRolls"}[k3]
+        for jo in cases from 2 do
+            sequence ib = extract_json_field(jo,"input"),
+                 thingy = extract_json_field(ib,what)[2..$]
+            object enumb = extract_json_field(jo,"expected")
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%v,%v,%v},\n",{thingy,enumb,desc})
+        end for
+    elsif slug="change" then                                                    -- []int coins, int tgt, bool|[]int expected:
+        for jo in cases from 2 do
+            sequence ct = extract_json_field(jo,"input"),
+                  coins = extract_json_field(ct,"coins")[2..$],
+               expected = extract_json_field(jo,"expected")
+            desc = extract_json_field(jo,"description")
+            integer tgt = extract_json_field(ct,"target")
+            bool err = expected[1]=JSON_OBJECT
+            string estr = iff(err?"false":sprintf("%v",{expected[2..$]}))
+            res &= sprintf("{%v,%d,%s,%v},\n",{coins,tgt,estr,desc})
+        end for
+    elsif k4 then                                                               -- []int factors, int limit, int expected:
+        what = {`factors`,`array`}[k4]
+        what2 = {`limit`,`value`}[k4]
+        for jo in cases from 2 do
+            sequence fl = extract_json_field(jo,"input"),
+                  facts = extract_json_field(fl,what)[2..$]
+            desc = extract_json_field(jo,"description")
+            integer limit = extract_json_field(fl,what2)
+            object expect = extract_json_field(jo,"expected")
+            if not integer(expect) then expect = -1 end if
+            res &= sprintf("{%v,%d,%d,%v},\n",{facts,limit,expect,desc})
+        end for
+    elsif slug="sublist" then                                                   -- []int s1, s2, string expected:
+        for jo in cases from 2 do
+            sequence fl = extract_json_field(jo,"input"),
+                     l1 = extract_json_field(fl,"listOne")[2..$],
+                     l2 = extract_json_field(fl,"listTwo")[2..$]
+            desc = extract_json_field(jo,"description")
+            string expect = extract_json_field(jo,"expected")
+            res &= sprintf("{%v,%v,%v,%v},\n",{l1,l2,expect,desc})
+        end for
+    elsif k5 then                                                               -- atom n, []int expected, desc
+        what = {`limit`,`value`}[k5]
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                    expect = extract_json_field(jo,"expected")[2..$]
+            desc = extract_json_field(jo,"description")
+            atom n = extract_json_field(input,what)
+            expect = ppf(expect)
+            res &= sprintf("{%d,%s,%v},\n",{n,expect,desc})
+        end for
+    elsif k6 then                                                               -- int n, [][]int expected, desc
+        what = {`size`,`count`}[k6]
+        string f = {`%2d`,`%d`}[k6]
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                    expect = extract_json_field(jo,"expected")[2..$]
+            desc = extract_json_field(jo,"description")
+            integer n = extract_json_field(input,what)
+            if expect!={} then
+                for i=1 to length(expect) do
+                    expect[i] = join(expect[i][2..$],",",fmt:=f)
+                end for
+                expect = "{"&join(expect,"},\n"&repeat(' ',4+(n>9))&"{")&"}"
+            end if
+            res &= sprintf("{%d,{%s},%v},\n",{n,expect,desc})
+        end for
+    elsif k7 then                                                               -- string, int, atom expected
+        what = {"planet","digits"}[k7]
+        string arg2 = {"seconds","span"}[k7]
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input")
+            string thing = extract_json_field(input,what) -- planet/digits
+            desc = extract_json_field(jo,"description")
+            atom thingy = extract_json_field(input,arg2) -- seconds/span
+            object expect = extract_json_field(jo,"expected")
+            if not atom(expect) then expect = false end if --==0
+            res &= sprintf("{%v,%d,%g,%v},\n",{thing,thingy,expect,desc})
+        end for
+    elsif slug="rotational-cipher" then                                         -- string, int, string expected
+        for jo in cases from 2 do
+            sequence tk = extract_json_field(jo,"input")
+            string text = extract_json_field(tk,"text"),
+                 expect = extract_json_field(jo,"expected")
+            integer shift = extract_json_field(tk,"shiftKey")
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%v,%d,%v,%v},\n",{text,shift,expect,desc})
+        end for
+    elsif k8 then                                                               -- string input, bool expected:
+        what = {`isbn`,`phrase`,`value`, `value`,`sentence`}[k8]
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input")
+            string thing = extract_json_field(input,what),
+                  expect = extract_json_field(jo,"expected")[2]
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%v,%s,%v},\n",{thing,expect,desc})
+        end for
+    elsif slug="scrabble-score" then                                            -- string word, int expected
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input")
+            string word = extract_json_field(input,"word")
+            desc = extract_json_field(jo,"description")
+            integer expect = extract_json_field(jo,"expected")
+            res &= sprintf("{%v,%d,%v},\n",{word,expect,desc})
+        end for
+    elsif k9 then                                                               -- int steps, int|str expected:
+        what = {"number","number","radicand","number"}[k9]                      --     (or atom n, int res for eliuds-eggs)
+        for jo in cases from 2 do                                               --    (and int radicand, res for square-root)
+            sequence io = extract_json_field(jo,"input")
+            atom input = extract_json_field(io,what)
+            desc = extract_json_field(jo,"description")
+            object expect = extract_json_field(jo,"expected")
+            if not integer(expect) then
+                expect = extract_json_field(expect,"error")
+            end if
+            res &= sprintf("{%d,%v,%v},\n",{input,expect,desc})
+        end for
+    elsif find(slug,{"raindrops","roman-numerals",`say`}) then                  -- int n, string expected:
+        for jo in cases from 2 do
+            sequence iy = extract_json_field(jo,"input")
+            atom n = extract_json_field(iy,"number")
+            sequence expected = extract_json_field(jo,"expected")
+            if string(expected) then
+                desc = extract_json_field(jo,"description")
+                res &= sprintf("{%d,%v,%v},\n",{n,expected,desc})
+            end if
+        end for
+    elsif slug="leap" then                                                      -- int year, bool expected:
+        for jo in cases from 2 do
+            sequence iy = extract_json_field(jo,"input")
+            integer year = extract_json_field(iy,"year")
+            string expected = extract_json_field(jo,"expected")[2]
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%d,%s,%v},\n",{year,expected,desc})
+        end for
+    elsif slug="perfect-numbers" then                                           -- int n, string expected|bool error, with extra nesting
+        for jg in cases from 2 do
+            inner_cases = extract_json_field(jg,"cases")
+            for jo in inner_cases from 2 do
+                sequence input = extract_json_field(jo,"input")
+                integer n = extract_json_field(input,"number")
+                object expected = extract_json_field(jo,"expected")
+                desc = extract_json_field(jo,"description")
+                if string(expected) then
+                    expected = sprintf(`%v`,{expected}) -- (add quotes)
+                else
+                    expected = "false"
+                end if
+                res &= sprintf("{%d,%s,%v},\n",{n,expected,desc})
+            end for
+        end for
+    elsif slug="all-your-base" then                                             -- int inbase, int[] digits, int outbase, {OK []int}|{ERROR,string}:
+        for jo in cases from 2 do
+            sequence ido = extract_json_field(jo,"input"),
+                  digits = extract_json_field(ido,"digits")[2..$],
+                  expect = extract_json_field(jo,"expected"),
+                 {e,exv} = iff(expect[1]=JSON_ARRAY
+                         ? {"OK",expect[2..$]}
+                         : {"ERROR",extract_json_field(expect,"error")})
+            integer inb = extract_json_field(ido,"inputBase"),
+                   outb = extract_json_field(ido,"outputBase")
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%d,%v,%d,{%s,%v},%v},\n",{inb,digits,outb,e,exv,desc})
+        end for
+    elsif slug="anagram" then                                                   -- string subject, {candidates}, {expected}:
+        for jo in cases from 2 do
+            sequence sc = extract_json_field(jo,"input"),
+                subject = extract_json_field(sc,"subject"),
+             candidates = extract_json_field(sc,"candidates")[2..$],
+               expected = extract_json_field(jo,"expected")[2..$]
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%v,%v,%v,%v},\n",{subject,candidates,expected,desc})
+        end for
+    elsif slug="nucleotide-count" then                                          -- string strand, string err|sequence {{char c, int n}}:
+        for jo in cases from 2 do
+            sequence sc = extract_json_field(jo,"input"),
+                 strand = extract_json_field(sc,"strand"),
+               expected = extract_json_field(jo,"expected")[2..$]
+            desc = extract_json_field(jo,"description")
+            if expected[1][1]=`error` then
+                expected = "false"
+            else
+                expected = join(expected,",",fmt:="{'%s',%d}") -- (str->char)
+                expected = "{"&expected&"}"
+            end if
+            res &= sprintf("{%v,%s,%v},\n",{strand,expected,desc})
+        end for
+    elsif slug="parallel-letter-frequency" then                                 -- []string texts, {int ch, n} expected
+        -- note: ch may be eg 'a' but also a unicode point >#255, 
+        --       which must be written as eg #10FFF /*(unicode)*/
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                     texts = extract_json_field(input,"texts")[2..$],
+                  expected = extract_json_field(jo,"expected")[2..$]
+            desc = extract_json_field(jo,"description")
+            -- ick, let's get really messy...
+            texts = sprintf("%v",{texts})
+            texts = substitute(texts,`while.`,`while.\n`)
+            texts = substitute(texts,`him. `,`him.\n `)
+            texts = substitute(texts,`thing:`,`thing:\n`)
+            texts = substitute(texts,`\r\n"`,"srsndq")
+            texts = substitute(texts,`\n`,`\n"&`&'\n'&`  "`)
+            texts = substitute(texts,"srsndq",`\r\n"`)
+            texts = substitute(texts,`e!","`,"e!\",\n  \"")
+            texts = substitute(texts,`d!","`,"d!\",\n  \"")
+            for i,e in expected do
+--              expected[i] = sprintf("{'%c',%d}",e)
+                if length(e[1])=1 then
+                    expected[i] = sprintf("{'%s',%d}",e)
+                else
+                    -- phix 'characters' (which are really just integers) 
+                    -- such as 'A' are strictly limited to 0..255, or less.
+                    e[1] = utf8_to_utf32(e[1])[1]
+                    expected[i] = sprintf("{#%x/*(unicode)*/,%d}",e)
+                end if
+            end for
+            string txt = sprintf("{%s,{%s},%v},\n",{texts,join(expected,","),desc})
+            txt = substitute(txt,"},{{'a',32}","},\n {{'a',32}")
+            txt = substitute(txt,"},{'r',17}","},\n  {'r',17}")
+            txt = substitute(txt,"},{{'a',845}","},\n {{'a',845}")
+            txt = substitute(txt,"},{'p',197}","},\n  {'p',197}")
+            integer kab = match(`{"abbccc",`,txt)
+            if kab then
+                txt[kab..find('}',txt,kab)] = `repeat("abbccc",50)`
+            end if
+            res &= txt
+        end for
+    elsif slug="word-count" then                                                -- string sentence, {{string word, int n}} expected:
+        for jo in cases from 2 do
+            sequence sc = extract_json_field(jo,"input"),
+               sentence = extract_json_field(sc,"sentence"),
+               expected = sort(extract_json_field(jo,"expected")[2..$])
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%v,%v,%v},\n",{sentence,expected,desc})
+        end for
+    elsif slug="protein-translation" then                                       -- string strand, string err|[]string expected:
+        for jo in cases from 2 do
+            sequence sc = extract_json_field(jo,"input"),
+                 strand = extract_json_field(sc,"strand"),
+               expected = extract_json_field(jo,"expected")
+            desc = extract_json_field(jo,"description")
+            if expected[1]=JSON_OBJECT then
+                expected = extract_json_field(expected,"error")
+            else
+                assert(expected[1]=JSON_ARRAY)
+                expected = expected[2..$]
+            end if
+            res &= sprintf("{%v,%v,%v},\n",{strand,expected,desc})
+        end for
+    elsif slug="series" then                                                    -- string text, int len, string err|[]string expected:
+        for jo in cases from 2 do
+            sequence tl = extract_json_field(jo,"input"),
+                   text = extract_json_field(tl,"series"),
+               expected = extract_json_field(jo,"expected")
+            integer len = extract_json_field(tl,"sliceLength")
+            desc = extract_json_field(jo,"description")
+            if expected[1]=JSON_OBJECT then
+                expected = extract_json_field(expected,"error")
+            else
+                assert(expected[1]=JSON_ARRAY)
+                expected = expected[2..$]
+            end if
+            res &= sprintf("{%v,%d,%v,%v},\n",{text,len,expected,desc})
+        end for
+    elsif slug="connect" then                                                   -- string board(joined), expected:
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                     board = extract_json_field(input,"board")[2..$]
+            string expect = extract_json_field(jo,"expected")
+            desc = extract_json_field(jo,"description")
+            board = join(board,"\n")
+            res &= sprintf("{%s\n%s%s,%v,%v},\n",{`"""`,board,`"""`,expect,desc})
+        end for
+    elsif slug="darts" then                                                     -- atom {x,y}, expected:
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input")
+            atom x = extract_json_field(input,"x"),
+                 y = extract_json_field(input,"y"),
+            expect = extract_json_field(jo,"expected")
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{{%g,%g},%d,%v},\n",{x,y,expect,desc})
+        end for
+    elsif slug="dominoes" then                                                  -- {{int a,b}}, bool expected:
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                  dominoes = vslice(extract_json_field(input,"dominoes")[2..$],{2,3})
+            string expect = extract_json_field(jo,"expected")[2]
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%v,%s,%v},\n",{dominoes,expect,desc})
+        end for
+    elsif slug="forth" then                                                     -- []string code, []int res, string error, with extra nesting
+        for jg in cases from 2 do
+            inner_cases = extract_json_field(jg,"cases")
+            for jo in inner_cases from 2 do
+                sequence input = extract_json_field(jo,"input"),
+                          code = extract_json_field(input,"instructions",{0})[2..$],
+                      expected = extract_json_field(jo,"expected")
+                string error = ""
+                desc = extract_json_field(jo,"description")
+                if expected[1]=JSON_ARRAY then
+                    expected = expected[2..$]
+                else
+                    error = extract_json_field(expected,"error")
+                    expected = {}
+                end if
+                if code={} then
+                    for i,ii in {"instructionsFirst","instructionsSecond"} do
+                        code = extract_json_field(input,ii)[2..$]
+                        res &= sprintf("{%v,%v,%v,%v},\n",{code,expected[i][2..$],error,desc})
+                    end for
+                else
+                    res &= sprintf("{%v,%v,%v,%v},\n",{code,expected,error,desc})
+                end if
+            end for
+        end for
+    elsif slug="game-of-life" then                                              -- [][]int board, expected
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                     board = extract_json_field(input,"matrix")[2..$],
+                    expect = extract_json_field(jo,"expected")[2..$]
+            desc = extract_json_field(jo,"description")
+            integer lb = length(board)
+            if lb=0 then
+                res &= sprintf("{%v,%v,%v},\n",{board,expect,desc})
+            else
+                board = join(apply(vslice(board,{2,lb+1}),sprint),",\n  ")
+                expect = join(apply(vslice(expect,{2,lb+1}),sprint),",\n"&repeat(' ',lb*2+6))
+                res &= sprintf("{{%s},{%s},%v},\n",{board,expect,desc})
+            end if
+        end for
+    elsif slug="pythagorean-triplet" then                                       -- int perim, [][]int expected, desc
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                    expect = extract_json_field(jo,"expected")[2..$]
+            desc = extract_json_field(jo,"description")
+            integer perim = extract_json_field(input,"n")
+            expect = vslice(expect,{2,4})
+            res &= sprintf("{%d,%v,%v},\n",{perim,expect,desc})
+        end for
+    elsif slug="matrix" then                                                    -- [][]int matrix, int rc, idx, []int expected, desc
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                    matrix = split(extract_json_field(input,"string"),'\n'),
+                    expect = extract_json_field(jo,"expected")[2..$]
+            integer rc = extract_json_field(jo,"property")[1],
+                   idx = extract_json_field(input,"index")
+            desc = extract_json_field(jo,"description")
+            for i,row in matrix do
+                matrix[i] = apply(split(row),to_integer)
+            end for
+            res &= sprintf("{%v,'%c',%d,%v,%v},\n",{matrix,rc,idx,expect,desc})
+        end for
+    elsif slug="hamming" then                                                   -- string strand1, strand2, int|str expected:
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input")
+            string s1 = extract_json_field(input,"strand1"),
+                   s2 = extract_json_field(input,"strand2")
+            object expect = extract_json_field(jo,"expected")
+            if not atom(expect) then
+                expect = extract_json_field(expect,"error")
+            end if
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%v,%v,%v,%v},\n",{s1,s2,expect,desc})
+        end for
+    elsif slug="wordy" then                                                     -- string question, int|str expected:
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input")
+            string qu = extract_json_field(input,"question")
+            object expect = extract_json_field(jo,"expected")
+            if not atom(expect) then
+                expect = extract_json_field(expect,"error")
+            end if
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%v,%v,%v},\n",{qu,expect,desc})
+        end for
+    elsif slug="hello-world" then                                               -- just the one expected (and a description)
+        assert(length(cases)=2)
+        string expect = extract_json_field(cases[2],"expected")
+        desc = extract_json_field(cases[2],"description")
+        res &= sprintf("{%v,%v},\n",{expect,desc})
+    elsif slug="minesweeper" then                                               -- columnized([]string minefield, expected), desc
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                 minefield = extract_json_field(input,"minefield")[2..$],
+                    expect = extract_json_field(jo,"expected")[2..$],
+                        me = columnize({minefield,expect})
+            string mes = join(me,",\n  ",fmt:="{%v,%v}")
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{{%s},%v},\n",{mes,desc})
+        end for
+    elsif kA then                                                               -- []string lines, expected, desc
+        what = {`lines`,`strings`,`rows`}[kA]
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                     lines = extract_json_field(input,what)[2..$],
+                    expect = extract_json_field(jo,"expected")[2..$]
+            for i,l in lines do
+                lines[i] = sprintf("%v",{l})
+            end for
+            for i,e in expect do
+                expect[i] = sprintf("%v",{e})
+            end for
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{{%s},\n {%s},%v},\n",{join(lines,",\n  "),join(expect,",\n  "),desc})
+        end for
+    elsif slug="state-of-tic-tac-toe" then                                      -- []string board, string expected, desc, with extra nesting
+        for j in cases from 2 do
+          inner_cases = extract_json_field(j,"cases")
+          for jo in inner_cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                     board = extract_json_field(input,"board")[2..$]
+            object expect = extract_json_field(jo,"expected")
+            if not string(expect) then expect = "invalid" end if
+            desc = extract_json_field(jo,"description")
+            for i,r in board do
+                board[i] = sprintf("%v",{r})
+            end for
+            board = join(board,",\n  ")
+            res &= sprintf("{{%s},%v,%v},\n",{board,expect,desc})
+          end for
+        end for
+    elsif slug="diamond" then                                                   -- char letter, []string expected, desc
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                    expect = extract_json_field(jo,"expected")[2..$]
+            integer letter = extract_json_field(input,"letter")[1]
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{'%c',%n{`%s`},%v},\n",{letter,letter>'A',join(expect,"`,\n `"),desc})
+        end for
+    elsif slug="palindrome-products" then                                       -- int imin, imax, {int n, []int factors}, string desc
+        res &= "**NB** CONVERSION FROM JSON INCOMPLETE.\n"
+        res &= " (also splits smallest?/largest? whereas I want {lo,hi}?)\n"
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                    expect = extract_json_field(jo,"expected")
+            integer imin = extract_json_field(input,"min"),
+                    imax = extract_json_field(input,"max")
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%d,%d,%v,%v},\n",{imin,imax,expect,desc})
+        end for
+    elsif slug="poker" then                                                     -- []string hands, expected, string desc
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                     hands = extract_json_field(input,"hands")[2..$],
+                    expect = extract_json_field(jo,"expected")[2..$]
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%v,%v,%v},\n",{hands,expect,desc})
+        end for
+    elsif slug="resistor-color" then                                            -- string colour, int expected (first set),
+                                                                                --       0, []string expected (second set)
+        for j,jo in cases from 2 do
+            if j=2 then 
+                inner_cases = extract_json_field(jo,"cases")
+                for jk in inner_cases from 2 do
+                    sequence input = extract_json_field(jk,"input")
+                    string color = extract_json_field(input,"color")
+                    desc = extract_json_field(jk,"description")
+                    integer expect = extract_json_field(jk,"expected")
+                    res &= sprintf("{%v,%d,%v},\n",{color,expect,desc})
+                end for
+            else
+                sequence expected = extract_json_field(jo,"expected")[2..$]
+                desc = extract_json_field(jo,"description")
+                res &= sprintf("{0,%v,%v},\n",{expected,desc})
+            end if
+        end for
+    elsif slug="resistor-color-duo" then                                        -- []string colors, int expected, string desc
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                    colors = extract_json_field(input,"colors")[2..$]
+            integer expect = extract_json_field(jo,"expected")
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%v,%v,%v},\n",{colors,expect,desc})
+        end for
+    elsif slug="resistor-color-trio" then                                       -- []string colors, string expected, desc
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                    colors = extract_json_field(input,"colors")[2..$],
+                    expect = extract_json_field(jo,"expected")
+            integer ei = extract_json_field(expect,"value")
+            string eu = extract_json_field(expect,"unit")
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%v,`%d %s`,%v},\n",{colors,ei,eu,desc})
+        end for
+    elsif slug="robot-simulator" then                                           -- xyd robot, string instructions, xyd expected, desc, with extra nesting
+                                                                                -- where xyd is {int x, y string dstr} as per routine above,
+        for jg in cases from 2 do
+            inner_cases = extract_json_field(jg,"cases")
+            for jo in inner_cases from 2 do
+                sequence input = extract_json_field(jo,"input"),
+                          ixyd = xyd(input),
+                          exyd = xyd(extract_json_field(jo,"expected"))
+                string instruct = extract_json_field(input,"instructions","")
+                desc = extract_json_field(jo,"description")
+                res &= sprintf("{%v,%v,%v,%v},\n",{ixyd,instruct,exyd,desc})
+            end for
+        end for
+    elsif slug="saddle-points" then                                             -- [][]int matrix, [][2]int expected, string desc
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                    matrix = extract_json_field(input,"matrix")[2..$],
+                    expect = extract_json_field(jo,"expected")[2..$]
+            desc = extract_json_field(jo,"description")
+            for i=1 to length(matrix) do
+                matrix[i] = matrix[i][2..$]
+            end for
+            for i,rc in expect do
+                integer r = extract_json_field(rc,"row"),
+                        c = extract_json_field(rc,"column")
+                expect[i] = {r,c}
+            end for
+            expect = sort(expect)
+            res &= sprintf("{%v,%v,%v},\n",{matrix,expect,desc})
+        end for
+    elsif slug="knapsack" then                                                  -- int max_weight, [][2]int weight_value, int expected, string desc
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                     items = extract_json_field(input,"items")[2..$]
+            for i,item in items do
+                items[i] = {extract_json_field(item,"weight"),
+                            extract_json_field(item,"value")}
+            end for
+            integer max_weight = extract_json_field(input,"maximumWeight"),
+                    expect = extract_json_field(jo,"expected")
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%d,%v,%d,%v},\n",{max_weight,items,expect,desc})
+        end for
+    elsif slug="secret-handshake" then                                          -- int code, []string expected, string desc
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                    expect = extract_json_field(jo,"expected")[2..$]
+            integer code = extract_json_field(input,"number")
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%d,%v,%v},\n",{code,expect,desc})
+        end for
+    elsif slug="two-bucket" then                                                -- int b1, b2, goal, string startbucket, \
+                                                                                --   {string goalbucket, int moves, other}|string err
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                    expect = extract_json_field(jo,"expected")
+            integer b1 = extract_json_field(input,"bucketOne"),
+                    b2 = extract_json_field(input,"bucketTwo"),
+                  goal = extract_json_field(input,"goal")
+            string sb = extract_json_field(input,"startBucket")
+            desc = extract_json_field(jo,"description")
+            if expect[2][1] = `error` then
+                expect = expect[2][2]
+            else
+                integer moves = extract_json_field(expect,"moves"),
+                        other = extract_json_field(expect,"otherBucket")
+                string gb = extract_json_field(expect,"goalBucket")
+                expect = {gb,moves,other}
+            end if
+            res &= sprintf("{%d,%d,%d,%v,%v,%v},\n",{b1,b2,goal,sb,expect,desc})
+        end for
+    elsif slug="variable-length-quantity" then                                  -- ([]int decoded|string err), []int encoded, string desc; with extra nesting flipped
+        for j,jg in cases from 2 do
+            inner_cases = extract_json_field(jg,"cases")
+            for jo in inner_cases from 2 do
+                sequence input = extract_json_field(jo,"input"),
+                       decoded = extract_json_field(input,"integers"),
+                       encoded = extract_json_field(jo,"expected")
+                desc = extract_json_field(jo,"description")
+                if j=3 then {decoded,encoded} = {encoded,decoded} end if
+                if decoded[1]=JSON_OBJECT then
+                    decoded = "\"crash(`incomplete`)\""
+                else
+                    decoded = "{"&join(decoded[2..$],",",fmt:="0x%X")&"}"
+                end if
+                encoded = "{"&join(encoded[2..$],",",fmt:="0x%X")&"}"
+                res &= sprintf("{%s,%s,%v},\n",{decoded,encoded,desc})
+            end for
+        end for
+    elsif slug="yacht" then                                                     -- []int dice, string category, int expected, string desc
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                      dice = extract_json_field(input,"dice")[2..$]
+            integer expect = extract_json_field(jo,"expected")
+            string category = extract_json_field(input,"category")
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%v,%v,%d,%v},\n",{dice,category,expect,desc})
+        end for
+    elsif slug="custom-set" then                                                -- string prop, then: (with extra nesting flattened out)
+                                                                                --      "empty": []int set, bool expected
+                                                                                --   "contains": []int set, int element, bool expected
+                                                                                --     "subset": []int set, set2, bool expected (ditto disj/eq)
+                                                                                --        "add": []int set, int element, []int expected
+                                                                                --       "diff": []int set, set2, []int expected
+        --
+        -- Note: I'm not a math-head, and I don't subscribe to the idea that a set can contain 7 copies of 2, or be out-of-order.
+        --       Of course I get that someone is just trying to make up tests that "look good", but non-sets are still not sets.
+        --       Likewise I realise ordered sets will horrify some, but unordered sets with no lookup index horrify me, so there.
+        --       (Of course a key-only dictionary is automatically a set, with somewhat lower costs of insertion and deletion.)
+        --       Anyway, that's why there are several sort()/unique() in the following, and some output is less "good looking".
+        --
+        for j,jg in cases from 2 do
+            inner_cases = extract_json_field(jg,"cases")
+            for jo in inner_cases from 2 do
+                sequence input = extract_json_field(jo,"input"),
+                        expect = extract_json_field(jo,"expected"),
+                           set, set2
+                desc = extract_json_field(jo,"description")
+                string prop = extract_json_field(jo,"property")
+                if prop="intersection" then prop = "intersect" end if -- (just a smidge prettier)
+                integer element
+                switch prop do
+                    case "empty":       set = extract_json_field(input,"set")[2..$]
+                                        res &= sprintf("{%v,%v,%s,%v},\n",{prop,set,expect[2],desc})
+                    case "contains":    set = extract_json_field(input,"set")[2..$]
+                                        element = extract_json_field(input,"element")
+                                        res &= sprintf("{%v,%v,%d,%s,%v},\n",{prop,set,element,expect[2],desc})
+                    case "subset",
+                       "disjoint",
+                          "equal":      set = extract_json_field(input,"set1")[2..$]
+                                        set2 = extract_json_field(input,"set2")[2..$]
+                                        res &= sprintf("{%v,%v,%v,%s,%v},\n",{prop,set,set2,expect[2],desc})
+                    case "add":         set = extract_json_field(input,"set")[2..$]
+                                        element = extract_json_field(input,"element")
+                                        res &= sprintf("{%v,%v,%d,%v,%v},\n",{prop,set,element,expect[2..$],desc})
+                    case "difference",
+                          "intersect",
+                              "union":  set = sort(extract_json_field(input,"set1")[2..$])
+                                        set2 = sort(extract_json_field(input,"set2")[2..$])
+                                        res &= sprintf("{%v,%v,%v,%v,%v},\n",{prop,set,set2,sort(expect[2..$]),desc})
+                end switch
+            end for
+        end for
+    elsif slug="grade-school" then                                              -- string desc, prop, []{string,int} students, then:
+                                                                                --             "add": []bool expected
+                                                                                --          "roster": []string expected
+                                                                                --           "grade": []string expected, int grade
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                  students = vslice(extract_json_field(input,"students")[2..$],{2,3}),
+                    expect = extract_json_field(jo,"expected")[2..$]
+            desc = extract_json_field(jo,"description")
+            string prop = extract_json_field(jo,"property")
+            switch prop do
+                case "add":         expect = join(vslice(expect,2),",")
+                                    res &= sprintf("{%v,%v,%v,{%s}},\n",{desc,prop,students,expect})
+                case "roster":      res &= sprintf("{%v,%v,%v,%v},\n",{desc,prop,students,expect})
+                case "grade":       integer grade = extract_json_field(input,"desiredGrade")
+                                    res &= sprintf("{%v,%v,%v,%v,%d},\n",{desc,prop,students,expect,grade})
+            end switch
+        end for
+    elsif slug="etl" then                                                       -- []{int, string} input, []{char, int} expected, desc
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                    expect = extract_json_field(jo,"expected")[2..$]
+            input = extract_json_field(input,"legacy")[2..$]
+            for i,l in input do
+                l[2] = join(l[2][2..$],"")
+                input[i] = sprintf("{%s,%v}",l)
+            end for
+            for i,e in expect do
+                expect[i] = sprintf("{'%s',%d}",e)
+            end for
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{{%s},{%s},%v},\n",{join(input,","),join(expect,","),desc})
+        end for
+
+    elsif slug="flatten-array" then                                             -- sequence [nested] input, expected, string desc
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                     array = rm2(extract_json_field(input,"array")),
+                    expect = extract_json_field(jo,"expected")[2..$]
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{%v,%v,%v},\n",{array,expect,desc})
+        end for
+    elsif slug="grep" then                                                      -- string filename, filetext,
+                                                                                -- then (of length 5 not 2):
+                                                                                -- string pattern, []string flags, files, expected, string desc
+                                                                                --      (with extra nesting flattened out)
+        sequence comments = extract_json_field(json,"comments")[2..$]
+        for i,c in comments do
+            if match(".txt",c) then
+                res &= sprintf(`{%v,"""%n`,{trim(c),true})
+                for j,c in comments from i+2 do
+                    bool bEnd = comments[j+1]=comments[i+1]
+                    string e = iff(bEnd?`"""},`:"")
+                    res &= sprintf("%s%s\n",{trim(c," |"),e})
+                    if bEnd then exit end if
+                end for
+            end if
+        end for
+        for j,jg in cases from 2 do
+            inner_cases = extract_json_field(jg,"cases")
+            for jo in inner_cases from 2 do
+                sequence input = extract_json_field(jo,"input"),
+                         flags = extract_json_field(input,"flags")[2..$],
+                         files = extract_json_field(input,"files")[2..$],
+                        expect = extract_json_field(jo,"expected")[2..$]
+                string pattern = extract_json_field(input,"pattern")
+                desc = extract_json_field(jo,"description")
+                expect = iff(length(expect)?sprintf("`%s`",{join(expect,"`,\n `")}):"")
+                res &= sprintf("{%v,%v,%v,\n{%s},%v},\n",{pattern,flags,files,expect,desc})
+            end for
+        end for
+    elsif slug="meetup" then                                                    -- {enum week, dayofweek, int month, year}, string expected, desc
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input")
+            integer year = extract_json_field(input,"year"),
+                   month = extract_json_field(input,"month")
+            string week = extract_json_field(input,"week"),
+              dayofweek = extract_json_field(input,"dayofweek"),
+                 expect = extract_json_field(jo,"expected")
+            desc = extract_json_field(jo,"description")
+            res &= sprintf("{{%s,%s,%d,%d},%v,%v},\n",{week,dayofweek,month,year,expect,desc})
+        end for
+    elsif slug="ledger" then                                                    -- string currency, locale, {{string date, desc, int amt}} entries, []string expected
+        bAddBOM = true
+        for jo in cases from 2 do
+            sequence input = extract_json_field(jo,"input"),
+                   entries = extract_json_field(input,"entries")[2..$],
+                    expect = extract_json_field(jo,"expected")[2..$]
+            string curr = extract_json_field(input,"currency"),
+                 locale = extract_json_field(input,"locale")
+            for i,e in entries do
+                string dt = extract_json_field(e,"date"),
+                      dsc = extract_json_field(e,"description")
+                integer amt = extract_json_field(e,"amountInCents")
+                entries[i] = sprintf("%v",{{dt,dsc,amt}})
+            end for
+            desc = extract_json_field(jo,"description")
+            entries = join(entries,",\n  ")
+            expect = join(expect,",\n  ",fmt:="`%s`")
+            res &= sprintf("{%v,%v,\n {%s},\n {%s},%v},\n",{curr,locale,entries,expect,desc})
+        end for
+    elsif slug="pov" then                                                       -- {{tree, string frompov, tree expected, desc},
+                                                                                --  {string nfrom, nto, tree, []strig expected, desc}}
+                                                                                -- [for once, the nested cases *are* preserved!]
+        for i,jo in cases from 2 do
+            inner_cases = extract_json_field(jo,"cases")
+            res &= "{\n"
+            for ji in inner_cases from 2 do
+                desc = extract_json_field(ji,"description")
+                sequence input = extract_json_field(ji,"input"),
+                          tree = pov_tree(extract_json_field(input,"tree"))
+                string nfrm = extract_json_field(input,"from")
+                object expect = extract_json_field(ji,"expected")
+                if i=2 then
+                    if expect[1]=JSON_KEYWORD then
+                        expect = null
+                    else
+                        expect = pov_tree(extract_json_field(ji,"expected"))
+                    end if
+                    res &= sprintf("{%v,%v,\n %v,%v},\n",{tree,nfrm,expect,desc})
+                else
+                    string nto = extract_json_field(input,"to")
+                    if expect[1]=JSON_KEYWORD then
+                        expect = null
+                    else
+                        expect = expect[2..$]
+                    end if
+
+                    res &= sprintf("{%v,%v,%v,\n %v,%v},\n",{nfrm,nto,tree,expect,desc})
+                end if
+            end for
+            res &= "},\n"
+        end for
+    else
+        res &= ppf(json,{pp_Nest,1})
+--      res &= print_json("",json)
+    end if
+    return res
+end function
+
+function s(integer n,f=true) return iff((n=1)=f?"":"s") end function
+
+function read_dir(string fullpath)
+    object d = dir(fullpath)
+    if d=-1 then throw("cannot read "&fullpath) end if
+    return filter(vslice(d,1),"out",{".",".."})
+end function
+
+function strip_reimplements(sequence json, string slug)
+    integer lj = length(json)
+    if json[1]=JSON_OBJECT then -- top_level
+        assert(lj>=3)
+        assert(json[2][1]=`exercise`)
+        assert(json[2][2]=slug)
+        integer l = iff(json[3][1]=`comments`?4:3)
+        assert(lj=l)
+        assert(json[l][1]=`cases`)
+        json[l][2]=strip_reimplements(json[l][2],slug)
+    elsif json[1]=JSON_ARRAY then -- cases set
+        sequence reimplemented = repeat(false,lj),
+                 uuids = repeat(0,lj),
+                 reimplements = repeat(0,lj)
+        bool second_pass_rqd = false
+        for i,ji in json from 2 do
+            assert(ji[1]=JSON_OBJECT)
+            string ji21 = ji[2][1]
+            if ji21=`uuid` then
+                uuids[i] = ji[2][2]
+                if ji[3][1]=`reimplements` then
+                    -- aside: sgf-parsing reimplements [26] in [25]...
+                    second_pass_rqd = true
+                    reimplements[i] = ji[3][2]      -- save
+                    json[i] = ji[1..2] & ji[4..$]   -- bin
+                end if
+            else
+                assert(ji21=`description`)
+                integer sk = iff(ji[3][1]=`comments`?4:3),
+                       lji = length(ji)
+                ji = 0 -- (kill refcount)
+                for k=sk to lji do
+                    assert(json[i][k][1]=`cases`)
+                    json[i][k][2] = strip_reimplements(json[i][k][2],slug)
+                end for
+            end if
+        end for
+        if second_pass_rqd then
+            for i,ri in reimplements do
+                if ri!=0 then
+                    integer k = find(ri,uuids)
+                    reimplemented[k] = true
+                end if
+            end for
+            sequence nj = {}
+            for i,ji in json do
+                if not reimplemented[i] then
+                    nj = append(nj,ji)
+                end if
+            end for
+            assert(nj[1]=JSON_ARRAY)    
+            json = nj
+        end if
+    else
+        ?9/0
+    end if
+    return json
+end function
+
+constant cd_hdr = """
+-- created automatically by the test generator and brutally overwritten on a regular basis.
+-- To permanently mark a test as ignoring all of this copy the following into test.exw:
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+-- Otherwise copy/paste this lot (rather than include, so it can verify up-to-date-ness):
+--  **NB** If this begins {-1,{`exercise`,`<slug_name>`, then it's still raw json, and the
+--          test generator needs updating to munge it, or you can just ignore it as above.
+--<do not edit>
+constant canonical_data = {
+""",
+cd_tail = """
+}
+--</do not edit>
+
+"""
+
+
+procedure main()
+--DEV rework this: start from phix_exercises, fetch from prob_spec_dir on demand..
+    sequence ped = read_dir(phix_exercises),
+             esd = read_dir(exercise_specs),
+         ignored = difference(ped,esd,false)
+    integer le = length(esd),
+            lp = length(ped),
+            li = length(ignored)
+    if li then -- error??
+        printf(1,"%d ignored exercise%s\n",{li,s(li)})
+        ?ignored
+        ped = difference(ped,ignored,false)
+    end if
+    sequence deprecated = {},
+             wo_canonic = {},
+             with_canon = {},
+             canon_json = {}
+
+    for es in esd do
+        string dot_deprec = join_path({exercise_specs,es,".deprecated"}),
+               canon_data = join_path({exercise_specs,es,"canonical-data.json"})
+        if file_exists(dot_deprec) then
+            deprecated &= {es}
+        elsif not file_exists(canon_data) then
+            wo_canonic &= {es}  
+        else
+            with_canon &= {es}
+            object json = parse_json(get_text(canon_data))
+            if json={JSON_INVALID} then
+                crash("INVALID_JSON:%s\n",{canon_data})
+            end if
+            json = strip_reimplements(json,es)
+            canon_json &= {json}
+        end if
+    end for
+    sequence ipd = intersection(ped,deprecated),
+             ipo = intersection(ped,wo_canonic),
+             ipw = sort(intersection(ped,with_canon)),
+         non_dep = difference(esd,deprecated), -- == sort(union(ipo,ipw))
+        not_phix = difference(non_dep,ped,false)
+    li = length(ipd)
+    if li then -- error?
+--      printf(1,"%d deprecated phix exercise%s\n",{ld,s(ld)})
+        throw("%d deprecated phix exercise%s",{li,s(li)})
+    end if
+    integer ld = length(deprecated),
+            lo = length(wo_canonic),
+            lw = length(with_canon),
+            po = length(ipo),
+            pw = length(ipw),
+            np = length(not_phix)
+--  ?deprecated
+    printf(1,"%d exercise spec%s loaded (%d active)\n",{le,s(le),le-ld})
+    printf(1,"%d deprecated exercise%s (0 phix)\n",{ld,s(ld)})
+    printf(1,"%d phix exercise%s implemented\n",{lp,s(lp)})
+    printf(1,"%d exercise%s not implemented in phix\n",{np,s(np)})
+--  ?not_phix -- good, 18 -- run (eg) F:\misc\phix\phix>bin\configlet create --practice-exercise zipper
+--/*
+{"affine-cipher","dot-dsl","error-handling","go-counting","grade-school","hangman","killer-sudoku-helper","knapsack",
+                                                            ^^                                              ^^
+ "lens-person","micro-blog","paasio","rational-numbers","rectangles","rest-api","satellite","sgf-parsing","tree-building",
+ "zipper"}
+--*/
+    printf(1,"%d exercise%s without canonical data\n",{lo,s(lo)})
+--  ?wo_canonic {"dot-dsl","error-handling","hangman","lens-person","paasio","robot-name","simple-linked-list","tree-building"}
+    printf(1,"%d phix exercise%s without canonical data\n",{po,s(po)})
+--  ?ipo -- {"robot-name","simple-linked-list"}
+    printf(1,"%d exercise%s with canonical data\n",{lw,s(lw)})
+    printf(1,"%d phix exercise%s with canonical data\n",{pw,s(pw)})
+--  ?wo_canonic -- (includes robot_name)
+    -- (but the following breakdown is of ipw, not ped aka ipo&ipw:)
+    sequence no_can = {},
+             ig_can = {},
+            in_date = {},
+           out_date = {} 
+    for pe in ipw do
+        string test_exw = join_path({phix_exercises,pe,"test.exw"}),
+                canon_e = join_path({phix_exercises,pe,"canonical_data.e"})
+        integer cdx = find(pe,with_canon)
+        assert(cdx!=0)
+        integer fn = open(canon_e,"w")
+        bAddBOM = false
+        string cds = generate_tests(pe,canon_json[cdx])
+--      string cds = ppf(canon_json[cdx],{pp_Nest,1})
+        if bAddBOM then puts(fn,"\#EF\#BB\#BF") end if
+        puts(fn,cd_hdr)
+        puts(fn,cds)
+--      if not begins(cd_hdr,cds) then
+--          cds = cds[4..$]
+--          assert(begins(cd_hdr,cds))
+--      end if
+--      cds = cds[length(cd_hdr)+1..$]
+        puts(fn,cd_tail)
+        close(fn)
+--?{pe,cdx}
+        if not file_exists(test_exw) then
+            crash("file does not exist: "&test_exw)
+--no: always write, then no_can if test_exw contains no <do not edit> markers,
+-- in_date if that matches what we just wrote, and out_date should it not.
+--Note this ignores tests.toml and any include=false that might contain.
+--Instead, test.exw should explicitly skip any tests it must by name, and the
+--maintainer of test.exw should manually keep said flag in tests.toml in sync 
+--but nothing at all even tries to automatically verify that. New unseen test
+--names suddenly appearing in tests.exw should be expected to cause a hiccup,
+--caught soon after you *manually* copy/paste canonical_data.e into test.exw.
+--Any "include canonical_data.e" statement found triggers a fatal error - if
+--that were allowed tests would get updated, but never actually tested - the
+--latter should of course be done manually after any manual edit of test.exw.
+--      elsif not file_exists(canon_e) then
+--          no_can &= {pe}  
+        else
+            string tt = get_text(test_exw)
+            tt = substitute(tt,"\r\n","\n")
+            sequence lines = split(tt,"\n")
+            for line in lines do
+                if begins("include",line)
+                and match("canonical_data.e",line) then
+                    crash("include canonical_data.e not permitted")
+                end if
+            end for
+            integer dne = match("--<do not edit>",tt)
+            if dne then
+                integer edn = match("--</do not edit>",tt,dne)
+                assert(edn!=0)
+                tt = trim(tt[find('>',tt,dne)+1..edn-1])
+                if begins("constant canonical_data = {",tt) then
+                    assert(tt[$]='}')
+                    tt = tt[find('{',tt)+1..$-1]
+                end if
+            end if
+            if tt="--ignore canonical_data.e" then
+                ig_can &= {pe}
+            elsif dne=0 then -- needs work!
+                no_can &= {pe}
+            elsif trim(tt)=trim(cds) then
+                in_date &= {pe}
+            else
+--?shorten(tt)
+--?shorten(cds)
+                out_date &= {pe}
+            end if  
+        end if  
+    end for
+    integer lnc = length(no_can),
+            lig = length(ig_can),
+            lid = length(in_date),
+            lod = length(out_date)
+--  ?ped
+    printf(1,"%d phix exercise%s deliberately ignore%s canonical data\n",{lig,s(lig),s(lig,false)})
+    printf(1,"%d phix exercise%s not using canonical data\n",{lnc,s(lnc)})
+    if lnc then ?no_can end if  -- should really be empty
+    printf(1,"%d phix exercise%s up to date\n",{lid,s(lid)})
+    printf(1,"%d phix exercise%s out of date\n",{lod,s(lod)})
+    if lod then ?out_date end if
+    ?"done"
+    wait_key()
+end procedure
+main()
+

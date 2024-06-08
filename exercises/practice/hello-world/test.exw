@@ -1,0 +1,12 @@
+include hello-world.e
+
+--<do not edit>
+constant canonical_data = {
+{"Hello, World!","Say Hi!"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+string {expected,desc} = canonical_data[1]
+test_equal(hello_world(), expected, desc) 
+test_summary() 

@@ -36,5 +36,7 @@ for practice_exercise_dir in ./exercises/practice/${slug}/; do
     if [ -d $practice_exercise_dir ]; then
         echo "Checking $(basename "${practice_exercise_dir}") exercise..."
         # TODO: run command to verify that the example solution passes the tests
+#       p bin/run.exw $(basename "${practice_exercise_dir}") ${practice_exercise_dir} /tmp
+        p bin/run.exw ${practice_exercise_dir}
     fi
 done
