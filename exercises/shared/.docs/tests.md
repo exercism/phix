@@ -1,15 +1,31 @@
 # Tests
 
-<!-- TODO: write document
+If you have the phix binary on your path, enter the command:
 
-  This document should contain instructions on how to run the exercise's tests.
+```bash
+p test 
+```
+This will run the test file (test.exw).
 
-  The instructions should be short and to the point.
+If the phix binary is not on the PATH, in Windows enter
 
-  The docs/TESTS.md file can contain a more verbose description on how to run tests.
+```cmd
+\path\to\p.exw test
+```
 
-  When a student downloads an exercise via the CLI, this file's contents are
-  included into the HELP.md file.
+Linux:
 
-  See https://exercism.org/docs/building/tracks/shared-files for more information.
--->
+```bash
+/path/to/p test
+```
+
+## Skipped tests
+
+Solving an exercise means making all its tests pass.
+By default, all the tests in the test.exw file are executed.
+To skip a test, prepend two dashes (the standard Phix comment marker) to the beginning of the line.
+
+Note the tests do not honour any include=false flags in tests.toml, rather it is the responsibility
+of the test.exw author to maintain them manually in that file to reflect reality for the benefit of
+the exercism site (eg collecting track statistics), but nothing in the track itself makes any use
+of them at all, specifically including the test generator and the test runner.

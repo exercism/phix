@@ -1,15 +1,14 @@
 # Tests
 
-<!-- TODO: write document
+## From the command line
+ 
+Simply type `p test`. It is assumed that the path to the phix binaries has been declared in the PATH environment variable.
 
-  This document should describe everything related to running tests in the track.
+See [Unit Testing][unit-testing] for details of the testing framework normally used.
+  
+## Editing the test.exw file(s)
+ 
+This is encouraged at the beginning of your journey. Insert a `--` before all but the first one or two tests. Save the test file. 
+Write your code to solve the first test or two. Then progressively enable more tests until you can pass all of them.
 
-  If your track uses skipped tests, this document can explain why thet is used and
-  how to unskip tests.
-
-  This document can also link to the testing framework documentation.
-
-  The contents of this document are displayed on the track's documentation
-  page at `https://exercism.org/docs/tracks/<track>/tests`.
-
-  See https://exercism.org/docs/building/tracks/docs for more information. -->
+[unit-testing]: http://phix.x10.mx/docs/html/unit_test.htm
