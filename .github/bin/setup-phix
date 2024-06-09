@@ -13,12 +13,12 @@ unzip phix.${PHIX_VERSION}.1.zip -d phix
 unzip phix.${PHIX_VERSION}.2.zip -d phix
 unzip phix.${PHIX_VERSION}.3.zip -d phix
 unzip phix.${PHIX_VERSION}.4.zip -d phix
-mv p64 phix/p64
+mv p64 phix/p
 cd phix
-chmod 777 p64
+chmod 777 p
 cd ..
 sudo mv phix /usr/local
 cd /usr/local/phix
 sudo find /usr/local/phix -type f -executable -exec ln -s {} \; 
 
-p64 -version
+p -version
