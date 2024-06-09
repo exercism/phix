@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-echo "untested"
-pause
-
 mkdir -p phix
 rm -r phix
 wget "http://phix.x10.mx/phix.${PHIX_VERSION}.zip"
@@ -10,7 +7,7 @@ wget "http://phix.x10.mx/phix.${PHIX_VERSION}.1.zip"
 wget "http://phix.x10.mx/phix.${PHIX_VERSION}.2.zip"
 wget "http://phix.x10.mx/phix.${PHIX_VERSION}.3.zip"
 wget "http://phix.x10.mx/phix.${PHIX_VERSION}.4.zip"
-wget "http://phix.x10.mx/p64
+wget "http://phix.x10.mx/p64"
 unzip phix.${PHIX_VERSION}.zip -d phix
 unzip phix.${PHIX_VERSION}.1.zip -d phix
 unzip phix.${PHIX_VERSION}.2.zip -d phix
@@ -24,9 +21,4 @@ sudo mv phix /usr/local
 cd /usr/local/phix
 sudo find /usr/local/phix -type f -executable -exec ln -s {} \; 
 
-#::filename="euphoria-${OPEN_EUPHORIA_VERSION}-Linux-x64-${OPEN_EUPHORIA_SHA}.tar.gz"
-#::wget "https://github.com/OpenEuphoria/euphoria/releases/download/${OPEN_EUPHORIA_VERSION}/${filename}"
-#::sudo tar -xzf "${filename}" -C /usr/local 
-#::cd /usr/local/bin 
-#::sudo find /usr/local/euphoria-${OPEN_EUPHORIA_VERSION}-Linux-x64/bin -type f -executable -exec ln -s {} \; 
 p -version

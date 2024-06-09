@@ -10,3 +10,4 @@ bin/configlet.exe
 /exercises/practice/acronym/.meta/backup
 /exercises/practice/acronym/backup
 *.err
+/.github/bin/backup
