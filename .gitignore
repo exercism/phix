@@ -11,3 +11,4 @@ bin/configlet.exe
 /exercises/practice/acronym/backup
 *.err
 /.github/bin/backup
+/exercises/shared/.docs/backup

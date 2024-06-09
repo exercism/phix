@@ -10,7 +10,7 @@ This will run the test file (test.exw).
 If the phix binary is not on the PATH, in Windows enter
 
 ```cmd
-\path\to\p.exw test
+\path\to\p.exe test
 ```
 
 Linux:
