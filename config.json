@@ -32,6 +32,14 @@
     "concept": [],
     "practice": [
       {
+        "slug": "acronym",
+        "name": "Acronym",
+        "uuid": "f6984a9f-94ad-44d2-beb0-b8b52fd1ddfb",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
         "slug": "hello-world",
         "name": "Hello World",
         "uuid": "8fae0957-3dc0-4db1-8609-a7087d0126d1",

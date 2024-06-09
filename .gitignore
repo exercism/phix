@@ -7,3 +7,6 @@ bin/configlet.exe
 /exercises/practice/hello-world/.meta/backup
 /exercises/practice/hello-world/backup
 /.github/workflows/backup
+/exercises/practice/acronym/.meta/backup
+/exercises/practice/acronym/backup
+*.err

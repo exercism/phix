@@ -1,0 +1,35 @@
+include acronym.e
+--include .meta\example.e
+
+--<do not edit>
+constant canonical_data = {
+{"Portable Network Graphics","PNG","basic"},
+{"Ruby on Rails","ROR","lowercase words"},
+{"First In, First Out","FIFO","punctuation"},
+{"GNU Image Manipulation Program","GIMP","all caps word"},
+{"Complementary metal-oxide semiconductor","CMOS","punctuation without whitespace"},
+{"Rolling On The Floor Laughing So Hard That My Dogs Came Over And Licked Me","ROTFLSHTMDCOALM","very long abbreviation"},
+{"Something - I made up from thin air","SIMUFTA","consecutive delimiters"},
+{`Halley's Comet`,"HC","apostrophes"},
+{"The Road _Not_ Taken","TRNT","underscore emphasis"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+
+for t in canonical_data do
+    string {input, expected, desc} = t
+    test_equal(acronym(input),expected,desc)
+end for
+--test_equal(acronym("Portable Network Graphics"), "PNG", "basic")
+--test_equal(acronym("Ruby on Rails"), "ROR", "lowercase words")
+--test_equal(acronym("First In, First Out"), "FIFO", "punctuation")
+--test_equal(acronym("GNU Image Manipulation Program"), "GIMP", "all caps word")
+--test_equal(acronym("Complementary metal-oxide semiconductor"), "CMOS", "punctuation without whitespace")
+--test_equal(acronym("Rolling On The Floor Laughing So Hard That My Dogs Came Over And Licked Me"), "ROTFLSHTMDCOALM", "very long abbreviation")
+--test_equal(acronym("Something - I made up from thin air"), "SIMUFTA", "consecutive delimiters")
+--test_equal(acronym("Halley's Comet"), "HC", "apostrophes")
+--test_equal(acronym("The Road _Not_ Taken"), "TRNT", "underscore emphasis")
+
+test_summary() 
+--wait_key()
