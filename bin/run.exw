@@ -49,7 +49,9 @@ procedure process()
 
     printf(1, "%s: testing...", {slug})
     assert(copy_file(meta_src,temp_src,true),"cannot copy "&meta_src&" to "&temp_src)
+printf(1, "copied %s to %\n", {meta_src,temp_src})
     assert(copy_file(test_src,tmp_dir,true),"cannot copy "&test_src&" to "&tmp_dir)
+printf(1, "copied %s to %\n", {test_src,tmp_dir})
 
     if file_exists(lib_dir) then
         assert(copy_directory(lib_dir,temp_lib,true),"cannot copy "&lib_dir&" to "&temp_lib)
@@ -102,7 +104,8 @@ printf(1,"DATA:\n%s\n",{join(lines,"<\n")})
         status = "error"
         if begins_3=0 then begins_3 = begins_hat end if
         -- We might want to limit this to, say, 8 lines?
-        message = join(filter(lines[1..begins_3],"!=",""),'\n')
+--      message = join(filter(lines[1..begins_3],"!=",""),'\n')
+        message = join(filter(lines[2..begins_3],"!=",""),'\n')
     else
         -- check for unit test errors or success
         integer first_failure = 0
@@ -130,6 +133,7 @@ printf(1,"DATA:\n%s\n",{join(lines,"<\n")})
     close(ofn)
 --temp:
 {} = print_json(1,json)
+?message
 ?res
 if res then abort(res) end if
 
