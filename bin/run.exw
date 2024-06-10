@@ -35,6 +35,7 @@ procedure process()
 ?{"slug",slug}
 ?{"temp_src",temp_src}
 ?{"sol_dir",sol_dir}
+?dir(sol_dir)
 
 --10/6/24
 --  if get_file_type(sol_dir)!=FILETYPE_DIRECTORY then
