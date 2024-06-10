@@ -18,7 +18,7 @@ cd phix
 chmod 777 p
 cd ..
 sudo mv phix /usr/local
---cd /usr/local/phix
+#cd /usr/local/phix
 cd /usr/local/bin
 sudo find /usr/local/phix -type f -executable -exec ln -s {} \; 
 
