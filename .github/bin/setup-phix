@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Note: 1.0.5a is/has a patched get_file_type().
+
 mkdir -p phix
 rm -r phix
 wget "http://phix.x10.mx/phix.${PHIX_VERSION}a.zip"

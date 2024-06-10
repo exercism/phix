@@ -111,6 +111,9 @@ procedure process()
     object pjres = print_json(ofn, json) -- (separate line so available for debugging)
     assert(pjres!=0,"bad json??")
     close(ofn)
+--temp:
+--{} = print_json(1,json)
+
     if res!=0 then crash(status) end if
 
 end procedure
