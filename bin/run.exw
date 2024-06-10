@@ -72,7 +72,7 @@ FILETYPE_DIRECTORY (2) if filename
         assert(create_directory(tmp_dir),"cannot create directory "&tmp_dir)
     end if
 
-    printf(1, "%s: testing...", {slug})
+    printf(1, "%s: testing...\n", {slug})
     assert(copy_file(meta_src,temp_src,true),"cannot copy "&meta_src&" to "&temp_src)
 --printf(1, "copied %s to %s\n", {meta_src,temp_src})
 --  assert(copy_file(test_src,tmp_dir,true),"cannot copy "&test_src&" to "&tmp_dir)
