@@ -1,0 +1,54 @@
+
+include grade-school.e
+
+--<do not edit>
+constant canonical_data = {
+{"Roster is empty when no student is added","roster",{},{}},
+{"Add a student","add",{{"Aimee",2}},{true}},
+{"Student is added to the roster","roster",{{"Aimee",2}},{"Aimee"}},
+{"Adding multiple students in the same grade in the roster","add",{{"Blair",2},{"James",2},{"Paul",2}},{true,true,true}},
+{"Multiple students in the same grade are added to the roster","roster",{{"Blair",2},{"James",2},{"Paul",2}},{"Blair","James","Paul"}},
+{"Cannot add student to same grade in the roster more than once","add",{{"Blair",2},{"James",2},{"James",2},{"Paul",2}},{true,true,false,true}},
+{"Student not added to same grade in the roster more than once","roster",{{"Blair",2},{"James",2},{"James",2},{"Paul",2}},{"Blair","James","Paul"}},
+{"Adding students in multiple grades","add",{{"Chelsea",3},{"Logan",7}},{true,true}},
+{"Students in multiple grades are added to the roster","roster",{{"Chelsea",3},{"Logan",7}},{"Chelsea","Logan"}},
+{"Cannot add same student to multiple grades in the roster","add",{{"Blair",2},{"James",2},{"James",3},{"Paul",3}},{true,true,false,true}},
+{"Student not added to multiple grades in the roster","roster",{{"Blair",2},{"James",2},{"James",3},{"Paul",3}},{"Blair","James","Paul"}},
+{"Students are sorted by grades in the roster","roster",{{"Jim",3},{"Peter",2},{"Anna",1}},{"Anna","Peter","Jim"}},
+{"Students are sorted by name in the roster","roster",{{"Peter",2},{"Zoe",2},{"Alex",2}},{"Alex","Peter","Zoe"}},
+{"Students are sorted by grades and then by name in the roster","roster",{{"Peter",2},{"Anna",1},{"Barb",1},{"Zoe",2},{"Alex",2},{"Jim",3},{"Charlie",1}},{"Anna","Barb","Charlie","Alex","Peter","Zoe","Jim"}},
+{"Grade is empty if no students in the roster","grade",{},{},1},
+{"Grade is empty if no students in that grade","grade",{{"Peter",2},{"Zoe",2},{"Alex",2},{"Jim",3}},{},1},
+{"Student not added to same grade more than once","grade",{{"Blair",2},{"James",2},{"James",2},{"Paul",2}},{"Blair","James","Paul"},2},
+{"Student not added to multiple grades","grade",{{"Blair",2},{"James",2},{"James",3},{"Paul",3}},{"Blair","James"},2},
+{"Student not added to other grade for multiple grades","grade",{{"Blair",2},{"James",2},{"James",3},{"Paul",3}},{"Paul"},3},
+{"Students are sorted by name in a grade","grade",{{"Franklin",5},{"Bradley",5},{"Jeff",1}},{"Bradley","Franklin"},5},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    sequence {desc,prop,input,expected} = t
+    switch prop do
+        case "add":    test_equal(add_students(input),expected,desc)
+        case "roster": test_equal(roster(input),expected,desc)
+        case "grade":  test_equal(grade(input,t[5]),expected,desc)
+    end switch
+end for
+test_summary()
+
+--/*
+-- I once toyed with the idea of extending this...
+--
+-- pre-register: log students who will be starting next year
+-- graduate: grade 3 pupils leave the school, all grade 2 pupils become grade 3, ditto 1->2, and all
+--           pre-registered students are formally enrolled in grade 1, with the former being emptied.
+-- expel: remove a student from the school, can also be used for non-mischievous pupils who move home.
+-- advance: move an exceptionally gifted pupil to a higher grade (cannot be applied to grade 3)
+-- holdback: move an exceptionally stupid pupil to a lower grade (normally invoked just before graduate,
+--           note that a grade 1 pupil would become pre-registered)
+-- no permanant record need be kept of expulsions, advances, holdbacks, or ex-pupils.
+--
+-- ... before penning some drivel about benchmarks that would not withstand repeating...
+*/
+

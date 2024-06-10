@@ -1,0 +1,17 @@
+{
+  "authors": [
+    "petelomax"
+  ],
+  "files": {
+    "solution": [
+      "forth.e"
+    ],
+    "test": [
+      "test.exw"
+    ],
+    "example": [
+      ".meta/example.e"
+    ]
+  },
+  "blurb": "Implement an evaluator for a very simple subset of Forth."
+}

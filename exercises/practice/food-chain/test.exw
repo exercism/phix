@@ -1,0 +1,76 @@
+include food-chain.e
+
+-- contains the below and more, anyway...
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+
+constant song = """
+I know an old lady who swallowed a fly.
+I don't know why she swallowed the fly. Perhaps she'll die.
+
+I know an old lady who swallowed a spider.
+It wriggled and jiggled and tickled inside her.
+She swallowed the spider to catch the fly.
+I don't know why she swallowed the fly. Perhaps she'll die.
+
+I know an old lady who swallowed a bird.
+How absurd to swallow a bird!
+She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.
+She swallowed the spider to catch the fly.
+I don't know why she swallowed the fly. Perhaps she'll die.
+
+I know an old lady who swallowed a cat.
+Imagine that, to swallow a cat!
+She swallowed the cat to catch the bird.
+She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.
+She swallowed the spider to catch the fly.
+I don't know why she swallowed the fly. Perhaps she'll die.
+
+I know an old lady who swallowed a dog.
+What a hog, to swallow a dog!
+She swallowed the dog to catch the cat.
+She swallowed the cat to catch the bird.
+She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.
+She swallowed the spider to catch the fly.
+I don't know why she swallowed the fly. Perhaps she'll die.
+
+I know an old lady who swallowed a goat.
+Just opened her throat and swallowed a goat!
+She swallowed the goat to catch the dog.
+She swallowed the dog to catch the cat.
+She swallowed the cat to catch the bird.
+She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.
+She swallowed the spider to catch the fly.
+I don't know why she swallowed the fly. Perhaps she'll die.
+
+I know an old lady who swallowed a cow.
+I don't know how she swallowed a cow!
+She swallowed the cow to catch the goat.
+She swallowed the goat to catch the dog.
+She swallowed the dog to catch the cat.
+She swallowed the cat to catch the bird.
+She swallowed the bird to catch the spider that wriggled and jiggled and tickled inside her.
+She swallowed the spider to catch the fly.
+I don't know why she swallowed the fly. Perhaps she'll die.
+
+I know an old lady who swallowed a horse.
+She's dead, of course!
+"""
+
+set_test_verbosity(TEST_SHOW_ALL)
+string res = food_chain()
+if res=song then
+    test_equal(res,song)
+else
+    sequence rlines = split(res,"\n"),
+             slines = split(song,"\n")
+    integer rl = length(rlines),
+            sl = length(slines)
+    test_equal(rl,sl,"number of lines match")
+    for i=1 to min(rl,sl) do
+        test_equal(rlines[i],slines[i],"line %d matches",{i})
+    end for
+end if
+test_summary()
+

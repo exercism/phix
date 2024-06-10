@@ -1,0 +1,57 @@
+include dnd-character.e
+
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+--set_test_verbosity(TEST_SHOW_FAILED)
+test_equal(modifier(3),-4,"ability modifier for score 3 is -4")
+test_equal(modifier(4),-3,"ability modifier for score 4 is -3")
+test_equal(modifier(5),-3,"ability modifier for score 5 is -3")
+test_equal(modifier(6),-2,"ability modifier for score 6 is -2")
+test_equal(modifier(7),-2,"ability modifier for score 7 is -2")
+test_equal(modifier(8),-1,"ability modifier for score 8 is -1")
+test_equal(modifier(9),-1,"ability modifier for score 9 is -1")
+test_equal(modifier(10),0,"ability modifier for score 10 is 0")
+test_equal(modifier(11),0,"ability modifier for score 11 is 0")
+test_equal(modifier(12),1,"ability modifier for score 12 is +1")
+test_equal(modifier(13),1,"ability modifier for score 13 is +1")
+test_equal(modifier(14),2,"ability modifier for score 14 is +2")
+test_equal(modifier(15),2,"ability modifier for score 15 is +2")
+test_equal(modifier(16),3,"ability modifier for score 16 is +3")
+test_equal(modifier(17),3,"ability modifier for score 17 is +3")
+test_equal(modifier(18),4,"ability modifier for score 18 is +4")
+
+procedure test_in_range(sequence desc, integer val)
+  test_true(val >= 3 and val <= 18, desc)
+end procedure
+test_in_range("random ability is within range", ability())
+
+procedure test_valid_character()
+  sequence char = new_character()
+  test_in_range("random character is valid - strength", get_strength(char))
+  test_in_range("random character is valid - dexterity", get_dexterity(char))
+  test_in_range("random character is valid - constitution", get_constitution(char))
+  test_in_range("random character is valid - intelligence", get_intelligence(char))
+  test_in_range("random character is valid - wisdom", get_wisdom(char))
+  test_in_range("random character is valid - charisma", get_charisma(char))
+  test_equal(get_hitpoints(char),10 + modifier(get_constitution(char)),"random character is valid - hitpoints")
+end procedure
+test_valid_character()
+
+procedure test_ability_calculated_once()
+  sequence char = new_character()
+  test_equal(get_strength(char),get_strength(char),"each ability is calculated once - strength")
+  test_equal(get_dexterity(char),get_dexterity(char),"each ability is calculated once - dexterity")
+  test_equal(get_constitution(char),get_constitution(char),"each ability is calculated once - constitution")
+  test_equal(get_intelligence(char),get_intelligence(char),"each ability is calculated once - intelligence")
+  test_equal(get_wisdom(char),get_wisdom(char),"each ability is calculated once - wisdom")
+  test_equal(get_charisma(char),get_charisma(char),"each ability is calculated once - charisma")
+end procedure
+test_ability_calculated_once()
+
+test_summary()
+set_test_verbosity(TEST_SHOW_ALL)
+
+

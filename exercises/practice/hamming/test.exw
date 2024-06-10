@@ -1,0 +1,23 @@
+
+include hamming.e 
+
+--<do not edit>
+constant canonical_data = {
+{"","",0,"empty strands"},
+{"A","A",0,"single letter identical strands"},
+{"G","T",1,"single letter different strands"},
+{"GGACTGAAATCTG","GGACTGAAATCTG",0,"long identical strands"},
+{"GGACGGATTCTG","AGGACGGATTCT",9,"long different strands"},
+{"AATG","AAA","strands must be of equal length","disallow first strand longer"},
+{"ATA","AGTG","strands must be of equal length","disallow second strand longer"},
+{"","G","strands must be of equal length","disallow empty first strand"},
+{"G","","strands must be of equal length","disallow empty second strand"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do 
+    {string s1, string s2, object expect, string desc} = t
+    test_equal(distance(s1,s2),expect,desc)
+end for
+test_summary() 

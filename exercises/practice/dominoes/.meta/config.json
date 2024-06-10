@@ -1,0 +1,17 @@
+{
+  "authors": [
+    "petelomax"
+  ],
+  "files": {
+    "solution": [
+      "dominoes.e"
+    ],
+    "test": [
+      "test.exw"
+    ],
+    "example": [
+      ".meta/example.e"
+    ]
+  },
+  "blurb": "Make a chain of dominoes."
+}

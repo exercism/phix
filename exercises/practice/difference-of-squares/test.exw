@@ -1,0 +1,36 @@
+include difference-of-squares.e
+
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+
+-- now, if I could construct this from the above...
+--  constant canonical_data = {
+--  {1,1,1,0},
+--  {5,225,55,170},
+--  {100,25502500,338350,25164150},
+--  }
+-- and maybe {"square of sum","sum of squares","difference of squares"}, but we'd
+-- need a matching {square_of_sum,sum_of_squares,difference_of_squares} anyway.
+
+set_test_verbosity(TEST_SHOW_ALL)
+
+-- Square the sum of the numbers up to the given number
+
+test_equal(square_of_sum(1), 1, "square of sum 1")
+test_equal(square_of_sum(5), 225, "square of sum 5")
+test_equal(square_of_sum(100), 25_502_500, "square of sum 100")
+
+-- Sum the squares of the numbers up to the given number
+
+test_equal(sum_of_squares(1), 1, "sum of squares 1")
+test_equal(sum_of_squares(5), 55, "sum of squares 5")
+test_equal(sum_of_squares(100), 338_350, "sum of squares 100")
+
+-- Subtract sum of squares from square of sums
+
+test_equal(difference_of_squares(1), 0, "difference of squares 1")
+test_equal(difference_of_squares(5), 170, "difference of squares 5")
+test_equal(difference_of_squares(100), 25_164_150, "difference of squares 100")
+
+test_summary()

@@ -1,0 +1,30 @@
+include grains.e
+
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+--set_test_verbosity(TEST_SHOW_FAILED)
+procedure test_equal_str(object a, b, string desc)
+    if not string(a) then a = sprintf("%d",a) end if
+    if not string(b) then b = sprintf("%d",b) end if
+    test_equal(a,b,desc)
+end procedure
+test_equal_str(square(1),1,"grains on square 1")
+test_equal_str(square(2),2,"grains on square 2")
+test_equal_str(square(3),4,"grains on square 3")
+test_equal_str(square(4),8,"grains on square 4")
+test_equal_str(square(16),32768,"grains on square 16") 
+test_equal_str(square(32),2147483648,"grains on square 32") 
+--test_equal(square(64),9223372036854775808,"grains on square 64") -- nah (fine on 64bit)
+--test_equal_str(square(64),#8000000000000000,"grains on square 64") -- ok
+--test_equal_str(square(64),"9223372036854775808","grains on square 64") --ok
+test_equal_str(square(64),power(2,63),"grains on square 64") -- but best
+test_equal(square(0),"square must be between 1 and 64","square 0 returns an error") 
+test_equal(square(-1),"square must be between 1 and 64","negative square returns an error") 
+test_equal(square(65),"square must be between 1 and 64","square greater than 64 returns an error") 
+test_equal_str(totalgrains(), "18446744073709551615","returns the total number of grains on the board") 
+ 
+test_summary()  
+

@@ -1,0 +1,17 @@
+include eliuds-eggs.e 
+
+--<do not edit>
+constant canonical_data = {
+{0,0,"0 eggs"},
+{16,1,"1 egg"},
+{89,4,"4 eggs"},
+{2000000000,13,"13 eggs"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    {atom n, integer expected, string desc} = t
+    test_equal(egg_count(n), expected, desc)
+end for
+test_summary() 

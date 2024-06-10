@@ -1,0 +1,59 @@
+include game-of-life.e
+
+--<do not edit>
+constant canonical_data = {
+{{},{},"empty matrix"},
+{{{0,0,0},
+  {0,1,0},
+  {0,0,0}},{{0,0,0},
+            {0,0,0},
+            {0,0,0}},"live cells with zero live neighbors die"},
+{{{0,0,0},
+  {0,1,0},
+  {0,1,0}},{{0,0,0},
+            {0,0,0},
+            {0,0,0}},"live cells with only one live neighbor die"},
+{{{1,0,1},
+  {1,0,1},
+  {1,0,1}},{{0,0,0},
+            {1,0,1},
+            {0,0,0}},"live cells with two live neighbors stay alive"},
+{{{0,1,0},
+  {1,0,0},
+  {1,1,0}},{{0,0,0},
+            {1,0,0},
+            {1,1,0}},"live cells with three live neighbors stay alive"},
+{{{1,1,0},
+  {0,0,0},
+  {1,0,0}},{{0,0,0},
+            {1,1,0},
+            {0,0,0}},"dead cells with three live neighbors become alive"},
+{{{1,1,1},
+  {1,1,1},
+  {1,1,1}},{{1,0,1},
+            {0,0,0},
+            {1,0,1}},"live cells with four or more neighbors die"},
+{{{1,1,0,1,1,0,0,0},
+  {1,0,1,1,0,0,0,0},
+  {1,1,1,0,0,1,1,1},
+  {0,0,0,0,0,1,1,0},
+  {1,0,0,0,1,1,0,0},
+  {1,1,0,0,0,1,1,1},
+  {0,0,1,0,1,0,0,1},
+  {1,0,0,0,0,0,1,1}},{{1,1,0,1,1,0,0,0},
+                      {0,0,0,0,0,1,1,0},
+                      {1,0,1,1,1,1,0,1},
+                      {1,0,0,0,0,0,0,1},
+                      {1,1,0,0,1,0,0,1},
+                      {1,1,0,1,0,0,0,1},
+                      {1,0,0,0,0,0,0,0},
+                      {0,0,0,0,0,0,1,1}},"bigger matrix"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    sequence {input,expected,desc} = t
+    test_equal(tick(input),expected,desc)
+end for
+test_summary()

@@ -209,6 +209,134 @@
         "difficulty": 3
       },
       {
+        "slug": "darts",
+        "name": "Darts",
+        "uuid": "848e20d8-1422-441e-b05b-1a49f16ae0e0",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "diamond",
+        "name": "Diamond",
+        "uuid": "f0c86383-5281-4aaa-9448-b7ab3081c090",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 3
+      },
+      {
+        "slug": "difference-of-squares",
+        "name": "Difference of Squares",
+        "uuid": "2060e3f8-8784-403a-9a8e-d2eca06c7b3b",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "dnd-character",
+        "name": "D&D Character",
+        "uuid": "5ad45dde-0d6b-45fd-aa95-6201ccb23c65",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "dominoes",
+        "name": "Dominoes",
+        "uuid": "80aa31dd-c5f5-4252-a25a-9fe5adcaec71",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 6
+      },
+      {
+        "slug": "eliuds-eggs",
+        "name": "Eliud's Eggs",
+        "uuid": "a496289a-ebb8-4ffd-99ef-4a935f413358",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "etl",
+        "name": "ETL",
+        "uuid": "00eed16e-d5ae-4330-b90d-8761d6e4fa6d",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 4
+      },
+      {
+        "slug": "flatten-array",
+        "name": "Flatten Array",
+        "uuid": "8e83ab42-fbee-4f60-a2bd-f98108244f95",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "food-chain",
+        "name": "Food Chain",
+        "uuid": "a5c0677b-dce9-4681-9334-ef30197ce8e5",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "forth",
+        "name": "Forth",
+        "uuid": "b89649fd-eaa3-49ed-bf4f-f09cfbeb355b",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 8
+      },
+      {
+        "slug": "game-of-life",
+        "name": "Conway's Game of Life",
+        "uuid": "c490a182-8889-4fd7-b66e-fb7aae8e0835",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "gigasecond",
+        "name": "Gigasecond",
+        "uuid": "b24f5cad-3096-4cbd-b131-348e399b849e",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "grade-school",
+        "name": "Grade School",
+        "uuid": "00aff98c-590e-4ffc-8994-b93d70ff81d4",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 3
+      },
+      {
+        "slug": "grains",
+        "name": "Grains",
+        "uuid": "cad24c70-f47e-4b78-95a9-9aba02263a1d",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "grep",
+        "name": "Grep",
+        "uuid": "554bb7db-aceb-4d83-8246-9af04f3756ea",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 6
+      },
+      {
+        "slug": "hamming",
+        "name": "Hamming",
+        "uuid": "67f1277f-79ea-4afe-84d4-37c114a42b93",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
         "slug": "hello-world",
         "name": "Hello World",
         "uuid": "8fae0957-3dc0-4db1-8609-a7087d0126d1",
