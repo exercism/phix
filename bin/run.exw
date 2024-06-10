@@ -64,6 +64,7 @@ procedure process()
 --X string cmd = sprintf(`p -batch %s/test > "%s" 2>&1`, {tmp_dir, out_file})
     string cmd = sprintf(`p -nopause %s/test > "%s" 2>&1`, {tmp_dir, out_file})
 --?cmd
+--{} = chdir("..")
     integer res = system_exec(cmd,4) -- (4 === result/wait and redirect/builtin)
 
     sequence lines = get_text(out_file,GT_LF_STRIPPED)
@@ -74,7 +75,7 @@ procedure process()
 
     string status = "pass", message = ""
 
---printf(1,"DATA:\n%s\n",{join(lines,"<\n")})
+printf(1,"DATA:\n%s\n",{join(lines,"<\n")})
     integer begins_hat = 0, begins_3 = 0, crashmsg = false
     for i,l in lines do
         if begins_hat=0
@@ -129,6 +130,8 @@ procedure process()
     close(ofn)
 --temp:
 {} = print_json(1,json)
+?res
+if res then abort(res) end if
 
 end procedure
 
