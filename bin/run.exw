@@ -57,7 +57,7 @@ procedure process()
 
     string status = "pass", message = ""
 
-printf(1,"DATA:\n%s\n",{join(lines,"<\n")})
+--printf(1,"DATA:\n%s\n",{join(lines,"<\n")})
     integer begins_hat = 0, begins_3 = 0, crashmsg = false
     for i,l in lines do
         if begins_hat=0
