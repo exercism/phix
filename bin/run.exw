@@ -34,9 +34,12 @@ procedure process()
            res_file = join_path({out_dir, "results.json"})
 ?{"slug",slug}
 ?{"temp_src",temp_src}
+?{"sol_dir",sol_dir}
 
 --10/6/24
-    if get_file_type(sol_dir)!=FILETYPE_DIRECTORY then
+--  if get_file_type(sol_dir)!=FILETYPE_DIRECTORY then
+    integer ftsd = get_file_type(sol_dir) then
+    if ftd!=FILETYPE_DIRECTORY then
 --  bool bOK = get_file_type(sol_dir)==FILETYPE_DIRECTORY
 --//    if not bOK and match(`/phix/bin/`,sol_dir) then
 --  if not bOK and match(`/bin/`,sol_dir) then
@@ -45,7 +48,8 @@ procedure process()
 --      bOK = get_file_type(sol_dir)==FILETYPE_DIRECTORY
 --  end if
 --  if not bOK then
-        crash(sol_dir&" does not exist or is is not a directory")
+--      crash(sol_dir&" does not exist or is is not a directory")
+        crash("%s does not exist or is is not a directory (%d)",{sol_dir,ftsd})
 else
  printf(1,"directory >%s< is fine...\n",{sol_dir})
     end if
