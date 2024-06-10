@@ -28,7 +28,13 @@ procedure process()
            out_file = join_path({tmp_dir, "t_" & slug & ".out"}),
            res_file = join_path({out_dir, "results.json"})
 
-    if get_file_type(sol_dir)!=FILETYPE_DIRECTORY  then
+--10/6/24
+    bool bOK = get_file_type(sol_dir)==FILETYPE_DIRECTORY
+    if not bOK and match(`/bin/`,sol_dir) then
+        sol_dir = substitute(sol_dir,`/bin/`,'/')
+        bOK = get_file_type(sol_dir)==FILETYPE_DIRECTORY
+    end if
+    if not bOK then
         crash(sol_dir&" does not exist or is is not a directory")
     end if
     if not file_exists(out_dir) then
