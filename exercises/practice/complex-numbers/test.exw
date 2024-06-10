@@ -1,0 +1,92 @@
+include complex-numbers.e
+
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+
+constant real_tests = {{"Real part of a purely real number",{1,0},1},
+                       {"Real part of a purely imaginary number",{0,1},0},
+                       {"Real part of a number with real and imaginary part",{1,2},1}},
+         imag_tests = {{"Imaginary part of a purely real number",{1,0},0},
+                       {"Imaginary part of a purely imaginary number",{0,1},1},
+                       {"Imaginary part of a number with real and imaginary part",{1,2},2}},
+          add_tests = {{"Add purely real numbers",{1,0},{2,0},{3,0}},
+                       {"Add purely imaginary numbers",{0,1},{0,2},{0,3}},
+                       {"Add numbers with real and imaginary part",{1,2},{3,4},{4,6}},
+                       {"Add real number to complex number",{1,2},5,{6,2}},
+                       {"Add complex number to real number",5,{1,2},{6,2}}},
+          sub_tests = {{"Subtract purely real numbers",1,2,{-1,0}},
+                       {"Subtract purely imaginary numbers",{0,1},{0,2},{0,-1}},
+                       {"Subtract numbers with real and imaginary part",{1,2},{3,4},{-2,-2}},
+                       {"Subtract real number from complex number",{5,7},4,{1,7}},
+                       {"Subtract complex number from real number",4,{5,7},{-1,-7}}},
+          mul_tests = {{"Imaginary unit",{0,1},{0,1},{-1,0}},
+                       {"Multiply purely real numbers",1,2,{2,0}},
+                       {"Multiply purely imaginary numbers",{0,1},{0,2},{-2,0}},
+                       {"Multiply numbers with real and imaginary part",{1,2},{3,4},{-5,10}},
+                       {"Multiply complex number by real number",{2,5},5,{10,25}},
+                       {"Multiply real number by complex number",{2,5},{5,0},{10,25}}},
+          div_tests = {{"Divide purely real numbers",1,2,{0.5,0}},
+                       {"Divide purely imaginary numbers",{0,1},{0,2},{0.5,0}},
+                       {"Divide numbers with real and imaginary part",{1,2},{3,4},{0.44,0.08}},
+                       {"Divide complex number by real number",{10,100},10,{1,10}},
+                       {"Divide real number by complex number",5,{1,1},{2.5,-2.5}}},
+          abs_tests = {{"Absolute value of a positive purely real number",5,5},
+                       {"Absolute value of a negative purely real number",-5,5},
+                       {"Absolute value of a purely imaginary number with positive imaginary part",{0,5},5},
+                       {"Absolute value of a purely imaginary number with negative imaginary part",{0,-5},5},
+                       {"Absolute value of a number with real and imaginary part",{3,4},5}},
+    conjugate_tests = {{"Conjugate a purely real number",5,{5,0}},
+                       {"Conjugate a purely imaginary number",{0,5},{0,-5}},
+                       {"Conjugate a number with real and imaginary part",{1,1},{1,-1}}},
+          exp_tests = {{"Euler's identity/formula",{0,PI},{-1,0}},
+                       {"Exponential of 0",0,{1,0}},
+                       {"Exponential of a purely real number",1,{EULER,0}},
+                       {"Exponential of a number with real and imaginary part",{ln(2),PI},{-2,0}},
+                       {"Exponential resulting in a number with real and imaginary part",{ln(2)/2,PI/4},{1,1}}}
+string desc
+complexn c, n1, n2, ec
+atom expected
+for t in real_tests do
+    {desc, c, expected} = t
+    test_equal(complex_real(c),expected,desc)
+end for
+for t in imag_tests do
+    {desc, c, expected} = t
+    test_equal(complex_imag(c),expected,desc)
+end for
+for t in add_tests do
+    {desc, n1, n2, ec} = t
+    test_equal(complex_add(n1,n2),ec,desc)
+end for
+for t in sub_tests do
+    {desc, n1, n2, ec} = t
+    test_equal(complex_sub(n1,n2),ec,desc)
+end for
+for t in mul_tests do
+    {desc, n1, n2, ec} = t
+    test_equal(complex_mul(n1,n2),ec,desc)
+end for
+for t in div_tests do
+    {desc, n1, n2, ec} = t
+    test_equal(complex_div(n1,n2),ec,desc)
+end for
+for t in abs_tests do
+    {desc, c, expected} = t
+    test_equal(complex_abs(c),expected,desc)
+end for
+for t in conjugate_tests do
+    {desc, c, ec} = t
+    test_equal(complex_conjugate(c),ec,desc)
+end for
+for t in exp_tests do
+    {desc, c, ec} = t
+    -- (aside: .15f is the 32-bit limit, 64-bit could withstand .18f, 
+    --         just, but there is not a huge point exceeding .10f tbh.)
+    test_equal(complex_exp(c),ec,desc,"%.15f")
+end for
+
+test_summary()
+

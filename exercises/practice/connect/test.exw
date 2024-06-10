@@ -1,0 +1,71 @@
+include connect.e
+
+--<do not edit>
+constant canonical_data = {
+{"""
+. . . . .
+ . . . . .
+  . . . . .
+   . . . . .
+    . . . . .""","","an empty board has no winner"},
+{"""
+X""","X","X can win on a 1x1 board"},
+{"""
+O""","O","O can win on a 1x1 board"},
+{"""
+O O O X
+ X . . X
+  X . . X
+   X O O O""","","only edges does not make a winner"},
+{"""
+X O . .
+ O X X X
+  O X O .
+   . O X .
+    X X O O""","","illegal diagonal does not make a winner"},
+{"""
+X . . .
+ . X O .
+  O . X O
+   . O . X
+    . . O .""","","nobody wins crossing adjacent angles"},
+{"""
+. O . .
+ O X X X
+  O X O .
+   X X O X
+    . O X .""","X","X wins crossing from left to right"},
+{"""
+. O . .
+ O X X X
+  O O O .
+   X X O X
+    . O X .""","O","O wins crossing from top to bottom"},
+{"""
+. X X . .
+ X . X . X
+  . X . X .
+   . X X . .
+    O O O O O""","X","X wins using a convoluted path"},
+{"""
+O X X X X X X X X
+ O X O O O O O O O
+  O X O X X X X X O
+   O X O X O O O X O
+    O X O X X X O X O
+     O X O O O X O X O
+      O X X X X X O X O
+       O O O O O O O X O
+        X X X X X X X X O""","X","X wins using a spiral path"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    string {board,expect,desc} = t
+    -- exercise gets a space/tab-stripped sequence of strings:
+    sequence brd = split(substitute_all(board," \t",{"",""}),'\n')
+    test_equal(result_of(brd),expect,desc)
+end for
+test_summary()
+

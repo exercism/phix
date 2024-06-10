@@ -1,0 +1,118 @@
+include circular-buffer.e
+
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+
+buffer b = new_buffer(1)
+test_true(string(read_byte(b)),"read empty buffer returns error")
+sequence w1r1 = {write_byte(b,'1'),
+                 read_byte(b)}
+test_equal(w1r1,{null,'1'},"w1r1")
+test_true(string(read_byte(b)),"read empty buffer returns error")
+
+reset(b,2)
+sequence w12r12 = {write_byte(b,'1'),
+                   write_byte(b,'2'),
+                   read_byte(b),
+                   read_byte(b)}
+test_equal(w12r12,{null,null,'1','2'},"w12r12")
+test_true(string(read_byte(b)),"read empty buffer returns error")
+
+reset(b,3)
+sequence w123 = {write_byte(b,'1'),
+                 write_byte(b,'2'),
+                 write_byte(b,'3')}
+test_equal(w123,{null,null,null},"w123")
+reset(b,3)
+sequence Rw13r1w4r3 = {write_byte(b,'1'),
+                       write_byte(b,'3'),
+                       read_byte(b),
+                       write_byte(b,'4'),
+                       read_byte(b)}
+test_equal(Rw13r1w4r3,{null,null,'1',null,'3'},"Rw13r1w4r3")
+
+reset(b,2)
+sequence w1r1w2r2 = {write_byte(b,'1'),
+                     read_byte(b),
+                     write_byte(b,'2'),
+                     read_byte(b)}
+test_equal(w1r1w2r2,{null,'1',null,'2'},"w1r1w2r2")
+
+reset(b,3)
+sequence w12r1w3r23 = {write_byte(b,'1'),
+                       write_byte(b,'2'),
+                       read_byte(b),
+                       write_byte(b,'3'),
+                       read_byte(b),
+                       read_byte(b)}
+test_equal(w12r1w3r23,{null,null,'1',null,'2','3'},"w12r1w3r23")
+
+reset(b,2)
+sequence w12 = {write_byte(b,'1'),
+                write_byte(b,'2')}
+test_equal(w12,{null,null},"w12")
+test_true(string(write_byte(b,'A')),"write to full buffer fails")
+
+overwrite(b,'A')
+sequence oAr2A = {read_byte(b),
+                  read_byte(b)}
+test_equal(oAr2A,{'2','A'},"oAr2A")
+test_true(string(read_byte(b)),"read empty buffer returns error")
+
+test_equal(write_byte(b,'1'),null,"write_byte 1")
+overwrite(b,'2')
+sequence r1o2 = {read_byte(b),
+                 read_byte(b)}
+test_equal(r1o2,{'1','2'},"r1o2")
+test_true(string(read_byte(b)),"read empty buffer returns error")
+
+reset(b,5)
+sequence w123r12w4r3w5678 = {write_byte(b,'1'),
+                             write_byte(b,'2'),
+                             write_byte(b,'3'),
+                             read_byte(b),
+                             read_byte(b),
+                             write_byte(b,'4'),
+                             read_byte(b),
+                             write_byte(b,'5'),
+                             write_byte(b,'6'),
+                             write_byte(b,'7'),
+                             write_byte(b,'8')}
+test_equal(w123r12w4r3w5678,{null,null,null,'1','2',null,'3',null,null,null,null},"w123r12w4r3w5678")
+overwrite(b,'A')
+overwrite(b,'B')
+sequence oABr678AB = {read_byte(b),
+                      read_byte(b),
+                      read_byte(b),
+                      read_byte(b),
+                      read_byte(b)}
+test_equal(oABr678AB,{'6','7','8','A','B'},"oABr678AB")
+test_true(string(read_byte(b)),"read empty buffer returns error")
+
+procedure benchmark_overwrite()
+    atom t0 = time()
+    buffer b := new_buffer(100)
+    for i=1 to 5000 do
+        overwrite(b,0)
+    end for
+    test_pass("benchmark overwrite (%s)",{elapsed(time()-t0)})
+end procedure
+
+procedure benchmark_write_read()
+    atom t0 = time()
+    buffer b := new_buffer(100)
+    for i=1 to 5000 do
+        if write_byte(b,i)!=null then crash("write_byte %d",{i}) end if
+        if read_byte(b)!=i then crash("read byte %d",{i}) end if
+    end for
+    test_pass("benchmark write read (%s)",{elapsed(time()-t0)})
+end procedure
+
+benchmark_overwrite()
+benchmark_write_read()
+
+test_summary()
+

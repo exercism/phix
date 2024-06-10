@@ -1,0 +1,93 @@
+include custom-set.e
+
+--<do not edit>
+constant canonical_data = {
+{"empty",{},true,"sets with no elements are empty"},
+{"empty",{1},false,"sets with elements are not empty"},
+{"contains",{},1,false,"nothing is contained in an empty set"},
+{"contains",{1,2,3},1,true,"when the element is in the set"},
+{"contains",{1,2,3},4,false,"when the element is not in the set"},
+{"subset",{},{},true,"empty set is a subset of another empty set"},
+{"subset",{},{1},true,"empty set is a subset of non-empty set"},
+{"subset",{1},{},false,"non-empty set is not a subset of empty set"},
+{"subset",{1,2,3},{1,2,3},true,"set is a subset of set with exact same elements"},
+{"subset",{1,2,3},{4,1,2,3},true,"set is a subset of larger set with same elements"},
+{"subset",{1,2,3},{4,1,3},false,"set is not a subset of set that does not contain its elements"},
+{"disjoint",{},{},true,"the empty set is disjoint with itself"},
+{"disjoint",{},{1},true,"empty set is disjoint with non-empty set"},
+{"disjoint",{1},{},true,"non-empty set is disjoint with empty set"},
+{"disjoint",{1,2},{2,3},false,"sets are not disjoint if they share an element"},
+{"disjoint",{1,2},{3,4},true,"sets are disjoint if they share no elements"},
+{"equal",{},{},true,"empty sets are equal"},
+{"equal",{},{1,2,3},false,"empty set is not equal to non-empty set"},
+{"equal",{1,2,3},{},false,"non-empty set is not equal to empty set"},
+{"equal",{1,2},{2,1},true,"sets with the same elements are equal"},
+{"equal",{1,2,3},{1,2,4},false,"sets with different elements are not equal"},
+{"equal",{1,2,3},{1,2,3,4},false,"set is not equal to larger set with same elements"},
+{"equal",{1},{1,1},true,"set is equal to a set constructed from an array with duplicates"},
+{"add",{},3,{3},"add to empty set"},
+{"add",{1,2,4},3,{1,2,3,4},"add to non-empty set"},
+{"add",{1,2,3},3,{1,2,3},"adding an existing element does not change the set"},
+{"intersect",{},{},{},"intersection of two empty sets is an empty set"},
+{"intersect",{},{2,3,5},{},"intersection of an empty set and non-empty set is an empty set"},
+{"intersect",{1,2,3,4},{},{},"intersection of a non-empty set and an empty set is an empty set"},
+{"intersect",{1,2,3},{4,5,6},{},"intersection of two sets with no shared elements is an empty set"},
+{"intersect",{1,2,3,4},{2,3,5},{2,3},"intersection of two sets with shared elements is a set of the shared elements"},
+{"difference",{},{},{},"difference of two empty sets is an empty set"},
+{"difference",{},{2,3,5},{},"difference of empty set and non-empty set is an empty set"},
+{"difference",{1,2,3,4},{},{1,2,3,4},"difference of a non-empty set and an empty set is the non-empty set"},
+{"difference",{1,2,3},{2,4},{1,3},"difference of two non-empty sets is a set of elements that are only in the first set"},
+{"difference",{1,1},{1},{},"difference removes all duplicates in the first set"},
+{"union",{},{},{},"union of empty sets is an empty set"},
+{"union",{},{2},{2},"union of an empty set and non-empty set is the non-empty set"},
+{"union",{1,3},{},{1,3},"union of a non-empty set and empty set is the non-empty set"},
+{"union",{1,3},{2,3},{1,2,3},"union of non-empty sets contains all unique elements"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+sequence set, set2
+integer elem
+object expect
+
+--
+-- Note: I'm not a math-head, and I don't subscribe to the idea that a set can contain 7 copies of 2, or be out-of-order.
+--       Of course I get that someone is just trying to make up tests that "look good", but non-sets are still not sets.
+--       Likewise I realise ordered sets will horrify some, but unordered sets with no lookup index horrify me, so there.
+--       (Of course a key-only dictionary is automatically a set, with somewhat lower costs of insertion and deletion.)
+--       Anyway, that's why there are several sort()/unique() in the following, example.e, and phix_test_generator.exw.
+--
+
+for t in canonical_data do
+    string prop = t[1],
+           desc = t[$]
+    switch prop do
+        case "empty":       {?,set,expect} = t
+                            test_equal(set_empty(set),expect,desc)
+        case "contains":    {?,set,elem,expect} = t
+                            test_equal(set_contains(set,elem),expect,desc)
+        case "subset":      {?,set,set2,expect} = t
+                            set2 = unique(set2)
+                            test_equal(set_subset(set,set2),expect,desc)
+        case "disjoint":    {?,set,set2,expect} = t
+                            test_equal(set_disjoint(set,set2),expect,desc)
+        case "equal":       {?,set,set2,expect} = t
+                            set = unique(set)
+                            set2 = unique(set2)
+                            test_equal(equal(set,set2),expect,desc)
+        case "add":         {?,set,elem,expect} = t
+                            test_equal(set_add(set,elem),expect,desc)
+        case "intersect":   {?,set,set2,expect} = t
+                            test_equal(set_intersect(set,set2),expect,desc)
+        case "difference":  {?,set,set2,expect} = t
+                            set = unique(set)
+                            test_equal(set_difference(set,set2),expect,desc)
+        case "union":       {?,set,set2,expect} = t
+--                          set = unique(set)
+--                          expect = unique(expect)
+                            test_equal(set_union(set,set2),expect,desc)
+        default:            ? prop
+    end switch
+end for
+test_summary()
+

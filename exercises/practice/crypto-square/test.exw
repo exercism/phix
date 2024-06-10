@@ -1,0 +1,54 @@
+include crypto-square.e
+
+--<do not edit>
+constant canonical_data = {
+{"","","empty plaintext results in an empty ciphertext"},
+{"... --- ...","","normalization results in empty plaintext"},
+{"A","a","Lowercase"},
+{"  b ","b","Remove spaces"},
+{"@1,%!","1","Remove punctuation"},
+{"This is fun!","tsf hiu isn","9 character plaintext results in 3 chunks of 3 characters"},
+{"Chill out.","clu hlt io ","8 character plaintext results in 3 chunks, the last one with a trailing space"},
+{"If man was meant to stay on the ground, god would have given us roots.","imtgdvs fearwer mayoogo anouuio ntnnlvt wttddes aohghn  sseoau ","54 character plaintext results in 7 chunks, the last two with trailing spaces"},
+}
+--</do not edit>
+
+constant tests = {
+        {"s#$%^&plunk","su pn lk"},
+        {"1, 2, 3 GO!","1g 2o 3 "},
+        {"1234","13 24"},
+        {"123456789","147 258 369"},
+        {"123456789abc","159 26a 37b 48c"},
+        {"Never vex thine heart with idle woes",
+         "neewl exhie vtetw ehaho ririe vntds"},
+        {"ZOMG! ZOMBIES!!!","zzi ooe mms gb "},
+        {"Time is an illusion. Lunchtime doubly so.",
+         "tasney inicds miohoo elntu  illib  suuml "},
+        {"We all know interspecies romance is weird.",
+         "wneiaw eorene awssci liprer lneoid ktcms "},
+        {"Madness, and then illumination.",
+         "msemo aanin dnin  ndla  etlt  shui "},
+        {"Vampires are people too!",
+         "vrel aepe mset paoo irpo"},
+        {"",""},
+        {"1","1"},
+        {"12","1 2"},
+        {"12 3","13 2 "},
+        {"12345678","147 258 36 "},
+        {"123456789a","159 26a 37  48 "},
+        {"If man was meant to stay on the ground god would have given us roots",
+         "imtgdvs fearwer mayoogo anouuio ntnnlvt wttddes aohghn  sseoau "},
+        {"Have a nice day. Feed the dog & chill out!",
+         "hifei acedl veeol eddgo aatcu nyhht"}}
+set_test_verbosity(TEST_SHOW_ALL)
+string input,expected,desc
+for i,t in canonical_data do
+    {input,expected,desc} = t
+    test_equal(encode(input),expected,desc)
+end for
+for i,t in tests do
+    {input,expected} = t
+    test_equal(encode(input),expected,input)
+end for
+test_summary()
+

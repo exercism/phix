@@ -1,0 +1,26 @@
+include change.e
+
+--<do not edit>
+constant canonical_data = {
+{{1,5,10,25},1,{1},"change for 1 cent"},
+{{1,5,10,25,100},25,{25},"single coin change"},
+{{1,5,10,25,100},15,{5,10},"multiple coin change"},
+{{1,4,15,20,50},23,{4,4,15},"change with Lilliputian Coins"},
+{{1,5,10,21,25},63,{21,21,21},"change with Lower Elbonia Coins"},
+{{1,2,5,10,20,50,100},999,{2,2,5,20,20,50,100,100,100,100,100,100,100,100,100},"large target values"},
+{{2,5,10,20,50},21,{2,2,2,5,10},"possible change without unit coins available"},
+{{4,5},27,{4,4,4,5,5,5},"another possible change without unit coins available"},
+{{1,10,11},20,{10,10},"a greedy approach is not optimal"},
+{{1,5,10,21,25},0,{},"no coins make 0 change"},
+{{5,10},3,false,"error testing for change smaller than the smallest of coins"},
+{{5,10},94,false,"error if no combination can add up to target"},
+{{1,2,5},-5,false,"cannot find negative change values"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    test_equal(change(t[1],t[2]),t[3],t[4])
+end for
+test_summary()
+
