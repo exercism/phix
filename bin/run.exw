@@ -14,7 +14,8 @@ procedure process()
     end if
     string exercise_folder = cl[3],             -- eg exercism/phix/exercises/practice/acronym
 //  string exercise_folder = cl[3+(cll=5)],     -- eg exercism/phix/exercises/practice/acronym
-           slug = get_file_base(exercise_folder),   -- eg acronym
+--         slug = get_file_base(exercise_folder),   -- eg acronym
+           slug = split_path(exercise_folder)[$],   -- eg acronym
 //         slug = iff(cll=5?cl[3]:get_file_base(exercise_folder)),  -- eg acronym
            sol_dir = get_proper_path(exercise_folder),
            out_dir = iff(platform()=WINDOWS?getenv("TMP"):"/tmp"),
@@ -22,8 +23,8 @@ procedure process()
            lib_dir = join_path({sol_dir, "lib"}),
            tmp_dir = join_path({out_dir, slug}),
            meta_src = join_path({sol_dir, ".meta", "example.e"}),
---         temp_src = join_path({tmp_dir, slug & ".e"}),
-           temp_src = join_path({tmp_dir, slug}) & ".e",
+           temp_src = join_path({tmp_dir, slug & ".e"}),
+--         temp_src = join_path({tmp_dir, slug}) & ".e",
 --         slug_e = slug & ".e",
 --         temp_src = join_path({tmp_dir, slug_e}),
            test_src = join_path({sol_dir, "test.exw"}),
