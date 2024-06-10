@@ -20,7 +20,7 @@ end function
 --
 -- Version 2, using mpfr & returning strings
 -- =========================================
---/!*
+--/*
 include mpfr.e
 
 global function square(integer n)
@@ -38,12 +38,12 @@ global function totalgrains()
     mpz_sub_si(z,z,1)
     return mpz_get_str(z)
 end function 
---*!/
+--*/
 
 --
 -- Version 3, building strings manually
 -- ====================================
---/*
+--/!*
 local function power2(integer n, m1=0)
     --
     -- return 2^n, optionally minus 1, as a string.
@@ -82,5 +82,5 @@ end function
 global function totalgrains() 
     return power2(64,-1)
 end function 
---*/
+--*!/
 
