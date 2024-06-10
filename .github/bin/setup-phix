@@ -19,7 +19,6 @@ chmod 777 p
 cd ..
 sudo mv phix /usr/local
 sudo mv /usr/local/phix/builtins /usr/local/bin/builtins
-#cd /usr/local/phix
 cd /usr/local/bin
 sudo find /usr/local/phix -type f -executable -exec ln -s {} \; 
 

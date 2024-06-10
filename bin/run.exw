@@ -6,64 +6,25 @@ procedure process()
     sequence cl = command_line()
     integer cll = length(cl)
     if cll<3 then
-//      -- maybe: if length 5, use 'em, as commented out below:
-//      puts(1, "usage: p ./bin/run.exw exercise-slug path/to/solution/folder/ path/to/output/directory/\n")
-        -- (this might want a[n optional] -nopause too - which won't be in cl btw)
         puts(1, "usage: p ./bin/run.exw path/to/exercise/folder/\n")
         return
     end if
     string exercise_folder = cl[3],             -- eg exercism/phix/exercises/practice/acronym
-//  string exercise_folder = cl[3+(cll=5)],     -- eg exercism/phix/exercises/practice/acronym
---         slug = get_file_base(exercise_folder),   -- eg acronym
            slug = split_path(exercise_folder)[$],   -- eg acronym
-//         slug = iff(cll=5?cl[3]:get_file_base(exercise_folder)),  -- eg acronym
            sol_dir = get_proper_path(exercise_folder),
            out_dir = iff(platform()=WINDOWS?getenv("TMP"):"/tmp"),
-//         out_dir = iff(cll=5?cl[5]:iff(platform()=WINDOWS?getenv("TMP"):"/tmp")),
            lib_dir = join_path({sol_dir, "lib"}),
            tmp_dir = join_path({out_dir, slug}),
            tmp_file = join_path({tmp_dir, "test.exw"}),
            meta_src = join_path({sol_dir, ".meta", "example.e"}),
            temp_src = join_path({tmp_dir, slug & ".e"}),
---         temp_src = join_path({out_dir, slug & ".e"}),
---         temp_src = join_path({tmp_dir, slug}) & ".e",
---         slug_e = slug & ".e",
---         temp_src = join_path({tmp_dir, slug_e}),
            test_src = join_path({sol_dir, "test.exw"}),
            temp_lib = join_path({tmp_dir, "lib"}),
            out_file = join_path({tmp_dir, "t_" & slug & ".out"}),
            res_file = join_path({out_dir, "results.json"})
---?{"slug",slug}
---?{"temp_src",temp_src}
---?{"sol_dir",sol_dir}
---?dir(sol_dir)
 
---10/6/24
---  if get_file_type(sol_dir)!=FILETYPE_DIRECTORY then
---  integer ftsd = get_file_type(sol_dir)
---  if ftsd!=FILETYPE_DIRECTORY then
---  sequence d = dir(
     if not file_exists(sol_dir) then
---  bool bOK = get_file_type(sol_dir)==FILETYPE_DIRECTORY
---//    if not bOK and match(`/phix/bin/`,sol_dir) then
---  if not bOK and match(`/bin/`,sol_dir) then
-----        sol_dir = substitute(sol_dir,`/phix/bin/`,'/')
---      sol_dir = substitute(sol_dir,`/bin/`,'/')
---      bOK = get_file_type(sol_dir)==FILETYPE_DIRECTORY
---  end if
---  if not bOK then
---      crash(sol_dir&" does not exist or is is not a directory")
---      string ftsds = {"UNDEFINED","NOT_FOUND","FILE","DIRECTORY"}[ftsd+2]
---/*
-FILETYPE_UNDEFINED (-1) if file could be multiply defined
-FILETYPE_NOT_FOUND (0) if filename does not exist
-FILETYPE_FILE (1) if filename is a file
-FILETYPE_DIRECTORY (2) if filename 
---*/
---      crash("%s does not exist or is is not a directory (%d aka FILETYPE_%s)",{sol_dir,ftsd,ftsds})
         crash("%s does not exist",{sol_dir})
---else
--- printf(1,"directory >%s< is fine...\n",{sol_dir})
     end if
     if not file_exists(out_dir) then
         assert(create_directory(out_dir),"cannot create directory "&out_dir)
@@ -74,11 +35,7 @@ FILETYPE_DIRECTORY (2) if filename
 
     printf(1, "%s: testing...\n", {slug})
     assert(copy_file(meta_src,temp_src,true),"cannot copy "&meta_src&" to "&temp_src)
---printf(1, "copied %s to %s\n", {meta_src,temp_src})
---  assert(copy_file(test_src,tmp_dir,true),"cannot copy "&test_src&" to "&tmp_dir)
     assert(copy_file(test_src,tmp_file,true),"cannot copy "&test_src&" to "&tmp_file)
---printf(1, "copied %s to %s\n", {test_src,tmp_dir})
---printf(1, "copied %s to %s\n", {test_src,tmp_file})
 
     if file_exists(lib_dir) then
         assert(copy_directory(lib_dir,temp_lib,true),"cannot copy "&lib_dir&" to "&temp_lib)
@@ -88,12 +45,8 @@ FILETYPE_DIRECTORY (2) if filename
         assert(delete_file(out_file),"cannot delete "&out_file)
     end if
 
---  string cmd = sprintf(`p %s/test`, {tmp_dir, out_file})
---  string cmd = sprintf(`p %s/test > "%s" 2>&1`, {tmp_dir, out_file})
---X string cmd = sprintf(`p -batch %s/test > "%s" 2>&1`, {tmp_dir, out_file})
     string cmd = sprintf(`p -nopause %s/test > "%s" 2>&1`, {tmp_dir, out_file})
---?cmd
---{} = chdir("..")
+
     integer res = system_exec(cmd,4) -- (4 === result/wait and redirect/builtin)
 
     sequence lines = get_text(out_file,GT_LF_STRIPPED)
@@ -104,7 +57,6 @@ FILETYPE_DIRECTORY (2) if filename
 
     string status = "pass", message = ""
 
---printf(1,"DATA:\n%s\n",{join(lines,"<\n")})
     integer begins_hat = 0, begins_3 = 0, crashmsg = false
     for i,l in lines do
         if begins_hat=0
@@ -158,11 +110,6 @@ FILETYPE_DIRECTORY (2) if filename
     object pjres = print_json(ofn, json) -- (separate line so available for debugging)
     assert(pjres!=0,"bad json??")
     close(ofn)
---temp:
---{} = print_json(1,json)
---?message
---?res
---if res then abort(res) end if
     if res!=0 then crash(status) end if
 
 end procedure
