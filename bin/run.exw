@@ -32,15 +32,17 @@ procedure process()
            temp_lib = join_path({tmp_dir, "lib"}),
            out_file = join_path({tmp_dir, "t_" & slug & ".out"}),
            res_file = join_path({out_dir, "results.json"})
-?{"slug",slug}
-?{"temp_src",temp_src}
-?{"sol_dir",sol_dir}
-?dir(sol_dir)
+--?{"slug",slug}
+--?{"temp_src",temp_src}
+--?{"sol_dir",sol_dir}
+--?dir(sol_dir)
 
 --10/6/24
 --  if get_file_type(sol_dir)!=FILETYPE_DIRECTORY then
-    integer ftsd = get_file_type(sol_dir)
-    if ftsd!=FILETYPE_DIRECTORY then
+--  integer ftsd = get_file_type(sol_dir)
+--  if ftsd!=FILETYPE_DIRECTORY then
+--  sequence d = dir(
+    if not file_exists(sol_dir) then
 --  bool bOK = get_file_type(sol_dir)==FILETYPE_DIRECTORY
 --//    if not bOK and match(`/phix/bin/`,sol_dir) then
 --  if not bOK and match(`/bin/`,sol_dir) then
@@ -50,16 +52,17 @@ procedure process()
 --  end if
 --  if not bOK then
 --      crash(sol_dir&" does not exist or is is not a directory")
-        string ftsds = {"UNDEFINED","NOT_FOUND","FILE","DIRECTORY"}[ftsd+2]
+--      string ftsds = {"UNDEFINED","NOT_FOUND","FILE","DIRECTORY"}[ftsd+2]
 --/*
 FILETYPE_UNDEFINED (-1) if file could be multiply defined
 FILETYPE_NOT_FOUND (0) if filename does not exist
 FILETYPE_FILE (1) if filename is a file
 FILETYPE_DIRECTORY (2) if filename 
 --*/
-        crash("%s does not exist or is is not a directory (%d aka FILETYPE_%s)",{sol_dir,ftsd,ftsds})
-else
- printf(1,"directory >%s< is fine...\n",{sol_dir})
+--      crash("%s does not exist or is is not a directory (%d aka FILETYPE_%s)",{sol_dir,ftsd,ftsds})
+        crash("%s does not exist",{sol_dir})
+--else
+-- printf(1,"directory >%s< is fine...\n",{sol_dir})
     end if
     if not file_exists(out_dir) then
         assert(create_directory(out_dir),"cannot create directory "&out_dir)
