@@ -2,13 +2,13 @@
 
 mkdir -p phix
 rm -r phix
-wget "http://phix.x10.mx/phix.${PHIX_VERSION}.zip"
+wget "http://phix.x10.mx/phix.${PHIX_VERSION}a.zip"
 wget "http://phix.x10.mx/phix.${PHIX_VERSION}.1.zip"
 wget "http://phix.x10.mx/phix.${PHIX_VERSION}.2.zip"
 wget "http://phix.x10.mx/phix.${PHIX_VERSION}.3.zip"
 wget "http://phix.x10.mx/phix.${PHIX_VERSION}.4.zip"
 wget "http://phix.x10.mx/p64"
-unzip phix.${PHIX_VERSION}.zip -d phix
+unzip phix.${PHIX_VERSION}a.zip -d phix
 unzip phix.${PHIX_VERSION}.1.zip -d phix
 unzip phix.${PHIX_VERSION}.2.zip -d phix
 unzip phix.${PHIX_VERSION}.3.zip -d phix
