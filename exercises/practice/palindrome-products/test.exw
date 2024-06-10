@@ -1,0 +1,27 @@
+include palindrome-products.e
+--include .meta\example.e
+
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+
+constant tests = {
+    {1,9,{{1,{{1,1}}},{9,{{1,9},{3,3}}}},"valid limits 1-9"},
+    {10,99,{{121,{{11,11}}},{9009,{{91,99}}}},"valid limits 10-99"},
+    {100,999,{{10201,{{101,101}}},{906609,{{913,993}}}},"valid limits 100-999"},
+    -- erm, 1000..9999 proves a bit slow for example.e, might merit a better algo...
+    -- note the split range's ...hi,lo,... are unverified, apart from "wot I got".
+    {1000,1999,{{1002001,{{1001,1001}}},{3848483,{{1931,1993}}}},"valid limits 1000-1999"},
+    {9000,9999,{{81099018,{{9002,9009}}},{99000099,{{9901,9999}}}},"valid limits 9000-9999"},
+    {3215,4000,{{10988901,{{3297,3333}}},{15600651,{{3907,3993}}}},"valid limits 3215-4000"},
+    {4,10,{{},{}},"no palindromes"},
+    {10,4,{{},{}},"fmin > fmax"},
+}
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in tests do
+    {integer imin, integer imax, sequence expect, string desc} = t
+    test_equal(palindromic_products(imin,imax),expect,desc)
+end for
+test_summary()
+--wait_key()

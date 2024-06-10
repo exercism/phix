@@ -1,0 +1,21 @@
+include builtins/map.e
+
+include nucleotide-count.e
+
+--<do not edit>
+constant canonical_data = {
+{"",{{'A',0},{'C',0},{'G',0},{'T',0}},"empty strand"},
+{"G",{{'A',0},{'C',0},{'G',1},{'T',0}},"can count one nucleotide in single-character input"},
+{"GGGGGGG",{{'A',0},{'C',0},{'G',7},{'T',0}},"strand with repeated nucleotide"},
+{"AGCTTTTCATTCTGACTGCAACGGGCAATATGTCTCTGTGTGGATTAAAAAAAGAGTGTCTGATAGCAGC",{{'A',20},{'C',12},{'G',17},{'T',21}},"strand with multiple nucleotides"},
+{"AGXXACT",false,"strand with invalid nucleotides"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    {string strand, object expect, string desc} = t
+    test_equal(counts(strand),expect,desc)
+end for
+test_summary()
+

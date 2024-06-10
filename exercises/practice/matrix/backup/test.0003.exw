@@ -1,0 +1,10 @@
+include matrix.e
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    {sequence matrix, integer rc, integer idx, sequence expected, string desc} = t
+    rc = iff(rc='r'?row:col)
+    test_equal(rc(matrix,idx),expected,desc)
+end for
+test_summary()
+

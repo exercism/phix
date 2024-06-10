@@ -439,6 +439,94 @@
         "practices": [],
         "prerequisites": [],
         "difficulty": 8
+      },
+      {
+        "slug": "markdown",
+        "name": "Markdown",
+        "uuid": "e770fb32-0a3e-4083-9368-df64bc4e73db",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 6
+      },
+      {
+        "slug": "matching-brackets",
+        "name": "Matching Brackets",
+        "uuid": "d477f063-cfca-461a-b2fd-a758c8cade2a",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 3
+      },
+      {
+        "slug": "matrix",
+        "name": "Matrix",
+        "uuid": "8071d52c-65b2-4d7b-aad9-f9e5105fc89e",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "meetup",
+        "name": "Meetup",
+        "uuid": "44821698-94e0-4958-a79d-0ea68206ca55",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 6
+      },
+      {
+        "slug": "minesweeper",
+        "name": "Minesweeper",
+        "uuid": "c98bca5f-4788-43ea-9bca-0e02f337310a",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "nth-prime",
+        "name": "Nth Prime",
+        "uuid": "97df9e08-dcf4-4a77-9477-59bd771de00a",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "nucleotide-count",
+        "name": "Nucleotide Count",
+        "uuid": "34243320-8549-48e4-bbbb-c9241b2d3d09",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "ocr-numbers",
+        "name": "OCR Numbers",
+        "uuid": "2682f476-a306-4c95-a593-2df8e03fa786",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 4
+      },
+      {
+        "slug": "palindrome-products",
+        "name": "Palindrome Products",
+        "uuid": "692eb06d-b5a0-46a8-9d5f-c2bab6b7fa14",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "pangram",
+        "name": "Pangram",
+        "uuid": "68418e89-eecd-4eb8-a833-cb661abf2e4e",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "parallel-letter-frequency",
+        "name": "Parallel Letter Frequency",
+        "uuid": "e3c5eb56-0ecc-4312-8e2c-8934fea4b90b",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 8
       }
     ]
   },

@@ -33,7 +33,7 @@ procedure process()
         assert(create_directory(tmp_dir),"cannot create directory "&tmp_dir)
     end if
 
-    printf(1, "%s: testing...\n", {slug})
+--  printf(1, "%s: testing...\n", {slug})
     assert(copy_file(meta_src,temp_src,true),"cannot copy "&meta_src&" to "&temp_src)
     assert(copy_file(test_src,tmp_file,true),"cannot copy "&test_src&" to "&tmp_file)
 

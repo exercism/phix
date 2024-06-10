@@ -1,0 +1,34 @@
+include matching-brackets.e
+
+--<do not edit>
+constant canonical_data = {
+{"[]",true,"paired square brackets"},
+{"",true,"empty string"},
+{"[[",false,"unpaired brackets"},
+{"}{",false,"wrong ordered brackets"},
+{"{]",false,"wrong closing bracket"},
+{"{ }",true,"paired with whitespace"},
+{"{[])",false,"partially paired brackets"},
+{"{[]}",true,"simple nested brackets"},
+{"{}[]",true,"several paired brackets"},
+{"([{}({}[])])",true,"paired and nested brackets"},
+{"{[)][]}",false,"unopened closing brackets"},
+{"([{])",false,"unpaired and nested brackets"},
+{"[({]})",false,"paired and wrong nested brackets"},
+{"[({}])",false,"paired and wrong nested brackets but innermost are correct"},
+{"{}[",false,"paired and incomplete brackets"},
+{"[]]",false,"too many closing brackets"},
+{")()",false,"early unexpected brackets"},
+{"{)()",false,"early mismatched brackets"},
+{"(((185 + 223.85) * 15) - 543)/2",true,"math expression"},
+{`\left(\begin{array}{cc} \frac{1}{3} & x\\ \mathrm{e}^{x} &... x^2 \end{array}\right)`,true,"complex latex expression"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    {string input, bool expected, string desc} = t
+    test_equal(balanced(input),expected,desc)
+end for
+test_summary()
+

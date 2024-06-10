@@ -1,0 +1,19 @@
+include nth-prime.e
+
+--<do not edit>
+constant canonical_data = {
+{1,2,"first prime"},
+{2,3,"second prime"},
+{6,13,"sixth prime"},
+{10001,104743,"big prime"},
+{0,"there is no zeroth prime","there is no zeroth prime"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    {integer n, object expected, string desc} = t
+    test_equal(prime(n),expected,desc)
+end for
+test_summary()
+
