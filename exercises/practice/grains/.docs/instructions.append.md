@@ -12,11 +12,6 @@ However, even atoms on 32-bit are still insufficiently accurate/large enough to 
 may instead return a string, which must/can be exact, without any commas or underscores, but are not obliged to so so on 64-bit. 
 You may construct such strings manually or use an arbitrary precision library such as [mpfr][mpfr].
 
-... /testme:
-, (**) and to get that working 
-on the exercism platform itself you would need to invoke mpir_open_dll("./lib/",true) to load it properly (**TODO**).
-(** AH: If I simply [find and] put it in the right place in the docker setup, that all vanishes... rzuckerm[?] may already...)
-
 A 32-bit version of Phix remains vital for adequate testing on desktop/Phix prior to using p2js, since JavaScript is inherently 
 32-bit (or perhaps more precisely 53-bit) even in a 64-bit browser running on a 64-bit machine.
 
