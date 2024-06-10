@@ -121,6 +121,94 @@
         "difficulty": 5
       },
       {
+        "slug": "book-store",
+        "name": "Book Store",
+        "uuid": "74ceda2f-e529-4862-9d85-aef47f85f9a5",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 8
+      },
+      {
+        "slug": "bottle-song",
+        "name": "Bottle Song",
+        "uuid": "c5cf5edf-369c-42fe-aa64-05eb42b6905f",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "bowling",
+        "name": "Bowling",
+        "uuid": "38d2447c-b2eb-4300-b053-8ceabea59214",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 6
+      },
+      {
+        "slug": "change",
+        "name": "Change",
+        "uuid": "f36e307f-e628-42b1-8daa-55ea57e2fcba",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "circular-buffer",
+        "name": "Circular Buffer",
+        "uuid": "f19f0d60-04c4-4145-a9a8-9c04deb5f8dd",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "clock",
+        "name": "Clock",
+        "uuid": "17a396cc-e62b-41d1-99b4-9fc00b5938db",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "collatz-conjecture",
+        "name": "Collatz Conjecture",
+        "uuid": "dee174d5-c059-4d2c-af1f-8f7333ab231c",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "complex-numbers",
+        "name": "Complex Numbers",
+        "uuid": "7e91305f-cac8-4974-a8a6-d1b643ae4419",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "connect",
+        "name": "Connect",
+        "uuid": "e61fcd6c-ce59-488d-ab26-1711c55d6d69",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "crypto-square",
+        "name": "Crypto Square",
+        "uuid": "2b5afc5a-ced3-4ae8-8160-e47cfdcb69fc",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 4
+      },
+      {
+        "slug": "custom-set",
+        "name": "Custom Set",
+        "uuid": "e7fd769f-4c5d-4397-8da3-7d7ca713f3f5",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 3
+      },
+      {
         "slug": "hello-world",
         "name": "Hello World",
         "uuid": "8fae0957-3dc0-4db1-8609-a7087d0126d1",
