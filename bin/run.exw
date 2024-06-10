@@ -46,6 +46,8 @@ procedure process()
 --  end if
 --  if not bOK then
         crash(sol_dir&" does not exist or is is not a directory")
+else
+ printf(1,"directory >%s< is fine...\n",{sol_dir})
     end if
     if not file_exists(out_dir) then
         assert(create_directory(out_dir),"cannot create directory "&out_dir)
