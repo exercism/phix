@@ -1,0 +1,31 @@
+
+include binary-search.e
+
+-- (expected is instead as per builtin binary_search(), ie -ve where it would go, 
+--  and certainly not 0-based indicies or their stupid -1 == "not found", hence:)
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+
+constant canonical_data_hand_modified = {
+{{6},6,1,"finds a value in an array with one element"},
+{{1,3,4,6,8,9,11},6,4,"finds a value in the middle of an array"},
+{{1,3,4,6,8,9,11},1,1,"finds a value at the beginning of an array"},
+{{1,3,4,6,8,9,11},11,7,"finds a value at the end of an array"},
+{{1,3,5,8,13,21,34,55,89,144,233,377,634},144,10,"finds a value in an array of odd length"},
+{{1,3,5,8,13,21,34,55,89,144,233,377},21,6,"finds a value in an array of even length"},
+{{1,3,4,6,8,9,11},7,-5,"identifies that a value is not included in the array"},
+{{1,3,4,6,8,9,11},0,-1,`a value smaller than the array's smallest value is not found`},
+{{1,3,4,6,8,9,11},13,-8,`a value larger than the array's largest value is not found`},
+{{},1,-1,"nothing is found in an empty array"},
+// I really don't understand what this means...
+{{1,2},0,-1,"nothing is found when the left and right bounds cross"},
+}
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data_hand_modified do
+    {sequence a, integer tgt, integer expect, string desc} = t
+    test_equal(my_find(a,tgt),expect,desc)
+end for
+test_summary()
+

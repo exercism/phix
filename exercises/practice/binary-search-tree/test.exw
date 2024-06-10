@@ -1,0 +1,96 @@
+include binary-search-tree.e
+
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+
+local function bst_size(binary_search_tree bst)
+    if bst == null then return 0 end if
+    return 1 + bst_size(bst.left) + bst_size(bst.right)
+end function
+
+local function bst_data(binary_search_tree bst, string path, integer pdx=1)
+    if bst == null then return "error:null" end if
+    if pdx>length(path) then return bst.data end if
+    integer pch = path[pdx]
+    assert(pch='l' or pch='r',"Invalid path element (%s[%d]=%c)",{path,pdx,pch})
+    return bst_data(iff(pch='l'?bst.left:bst.right), path, pdx+1)
+end function
+
+// make_bst builds tree by calling user defined functions new_bst and bst_insert
+local function make_bst(sequence input)
+    if length(input) == 0 then return null end if
+    binary_search_tree tree = new_bst(input[1])
+    for data in input from 2 do
+        bst_insert(tree,data)
+    end for
+    return tree
+end function
+
+local function expand_path(string p)
+    sequence parts = repeat(0,length(p)+1)
+    parts[1] = "bst"
+    for i, c in p do
+        parts[i+1] = iff(c='l'?"left":"right")
+    end for
+    return join(parts,".")
+end function
+
+local procedure test_new_bst()
+    binary_search_tree tree = new_bst(4)
+    test_not_equal(tree,null,"bst should not be null")
+    test_equal(bst_size(tree),1,"bst has expected size")
+    test_equal(tree.data,4,"bst root has expected data")
+end procedure
+
+local procedure test_bst_insert()
+    sequence tests = {{"smaller number at left node",{4,2},{"","l"},{4,2}},
+                      {"same number at left node",{4,4},{"","l"},{4,4}},
+                      {"greater number at right node",{4,5},{"","r"},{4,5}},
+                      {"can create complex tree",{4,2,6,1,3,5,7},
+                          {"","l","ll","lr","r","rl","rr"},{4,2,1,3,6,5,7}}}
+    for t in tests do
+        sequence {desc,input,paths,data} = t
+        binary_search_tree tree = make_bst(input)
+        test_not_equal(tree,null,"bst should not be null")
+        test_equal(bst_size(tree),length(input),"bst has expected number of elements")
+        for i, path in paths do
+            integer expected = data[i],
+                    got = bst_data(tree,path)
+            test_equal(got,expected,"correct value at "&expand_path(path))
+        end for
+    end for
+end procedure
+
+local procedure test_bst_get_sorted_data()
+    sequence tests = {{"can sort single number",{2},{2}},
+                      {"can sort if second number is smaller than first",{2,1},{1,2}},
+                      {"can sort if second number is same as first",{2,2},{2,2}},
+                      {"can sort if second number is greater than first",{2,3},{2,3}},
+                      {"can sort complex tree",{2,1,3,6,7,5},{1,2,3,5,6,7}}}
+    for t in tests do
+        sequence {desc,input,expected} = t
+        binary_search_tree tree = make_bst(input)
+        test_equal(bst_size(tree),length(input),"%s (size)",{desc})
+        sequence got = bst_get_sorted_data(tree)
+        test_equal(got,expected,"%s (sorted contents)",{desc})
+    end for
+end procedure
+
+procedure benchmark_bst_get_sorted_data()
+    sequence input = {2,1,3,6,7,5,2,1,3,6,7,5}
+    binary_search_tree tree = make_bst(input)
+    atom t0 = time()
+    for i=1 to 7000 do -- (aiming for 0.5s)
+        sequence result = bst_get_sorted_data(tree)
+    end for
+    test_pass("benchmarks complete (%s)",{elapsed(time()-t0)})
+end procedure
+
+set_test_verbosity(TEST_SHOW_ALL)
+test_new_bst()
+test_bst_insert()
+test_bst_get_sorted_data()
+benchmark_bst_get_sorted_data()
+test_summary()
+

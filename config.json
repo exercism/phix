@@ -41,6 +41,94 @@
         "difficulty": 5
       },
       {
+        "slug": "affine-cipher",
+        "name": "Affine Cipher",
+        "uuid": "48cbc995-ccbb-4788-84cf-3e45cfe54605",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "all-your-base",
+        "name": "All Your Base",
+        "uuid": "78bd9698-6859-422e-adba-7ba5f5c4c1b2",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "allergies",
+        "name": "Allergies",
+        "uuid": "a0263899-06d3-4eec-a771-d17862de5a57",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "alphametics",
+        "name": "Alphametics",
+        "uuid": "94f5192b-d94a-4ecc-be23-e1815dd8fb34",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 7
+      },
+      {
+        "slug": "anagram",
+        "name": "Anagram",
+        "uuid": "4eb64d85-270b-4277-b841-a98c4a4198cc",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "armstrong-numbers",
+        "name": "Armstrong Numbers",
+        "uuid": "7e734341-44b6-461b-9507-f18b133479cf",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "atbash-cipher",
+        "name": "Atbash Cipher",
+        "uuid": "04511727-ca46-4926-bfe5-c9c83cdc1ae0",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 3
+      },
+      {
+        "slug": "bank-account",
+        "name": "Bank Account",
+        "uuid": "cb4f143e-5667-400b-97a0-c63c73920a5c",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 7
+      },
+      {
+        "slug": "binary-search",
+        "name": "Binary Search",
+        "uuid": "d83eb330-a39b-467e-ba81-65393d84e7d2",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "binary-search-tree",
+        "name": "Binary Search Tree",
+        "uuid": "73628676-5309-4265-90bb-2042a6de3e97",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 4
+      },
+      {
+        "slug": "bob",
+        "name": "Bob",
+        "uuid": "9d14e795-879e-4549-afba-9462601079e4",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
         "slug": "hello-world",
         "name": "Hello World",
         "uuid": "8fae0957-3dc0-4db1-8609-a7087d0126d1",

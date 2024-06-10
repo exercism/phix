@@ -1,0 +1,37 @@
+include lib/errors.e
+
+include all-your-base.e
+
+--<do not edit>
+constant canonical_data = {
+{2,{1},10,{OK,{1}},"single bit one to decimal"},
+{2,{1,0,1},10,{OK,{5}},"binary to single decimal"},
+{10,{5},2,{OK,{1,0,1}},"single decimal to binary"},
+{2,{1,0,1,0,1,0},10,{OK,{4,2}},"binary to multiple decimal"},
+{10,{4,2},2,{OK,{1,0,1,0,1,0}},"decimal to binary"},
+{3,{1,1,2,0},16,{OK,{2,10}},"trinary to hexadecimal"},
+{16,{2,10},3,{OK,{1,1,2,0}},"hexadecimal to trinary"},
+{97,{3,46,60},73,{OK,{6,10,45}},"15-bit integer"},
+{2,{},10,{OK,{0}},"empty list"},
+{10,{0},2,{OK,{0}},"single zero"},
+{10,{0,0,0},2,{OK,{0}},"multiple zeros"},
+{7,{0,6,0},10,{OK,{4,2}},"leading zeros"},
+{1,{0},10,{ERROR,"input base must be >= 2"},"input base is one"},
+{0,{},10,{ERROR,"input base must be >= 2"},"input base is zero"},
+{-2,{1},10,{ERROR,"input base must be >= 2"},"input base is negative"},
+{2,{1,-1,1,0,1,0},10,{ERROR,"all digits must satisfy 0 <= d < input base"},"negative digit"},
+{2,{1,2,1,0,1,0},10,{ERROR,"all digits must satisfy 0 <= d < input base"},"invalid positive digit"},
+{2,{1,0,1,0,1,0},1,{ERROR,"output base must be >= 2"},"output base is one"},
+{10,{7},0,{ERROR,"output base must be >= 2"},"output base is zero"},
+{2,{1},-7,{ERROR,"output base must be >= 2"},"output base is negative"},
+{-2,{1},-7,{ERROR,"input base must be >= 2"},"both bases are negative"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    {integer ib, sequence digits, integer ob, sequence expected, string desc} = t
+    test_equal(rebase(ib,digits,ob), expected, desc)
+end for
+test_summary() 
+

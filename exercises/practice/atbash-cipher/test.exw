@@ -1,0 +1,27 @@
+include atbash-cipher.e
+
+-- (I gave it a go, but...)
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+                                                                                                                                                    
+constant tests = {
+    {"encode yes","yes","bvh"},
+    {"encode no","no","ml"},
+    {"encode OMG","OMG","lnt"},
+    {"encode spaces","O M G","lnt"},
+    {"encode mindblowingly","mindblowingly","nrmwy oldrm tob"},
+    {"encode numbers","Testing,1 2 3, testing.","gvhgr mt123 gvhgr mt"},
+    {"encode deep thought","Truth is fiction.","gifgs rhurx grlm"},
+    {"encode all the letters","The quick brown fox jumps over the lazy dog.",
+                              "gsvjf rxpyi ldmul cqfnk hlevi gsvoz abwlt"}}
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in tests do
+    string {desc,phrase,expected} = t
+    test_equal(atbash(phrase),expected,desc)
+    test_equal(filter(atbash(expected),"out"," "),
+               filter(lower(phrase),"out"," ,."),desc)
+end for
+test_summary()
+

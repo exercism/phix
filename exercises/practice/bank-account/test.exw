@@ -1,0 +1,184 @@
+include bank-account.e
+                                                                                                                                                    
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+
+procedure test_sequential_open_balance_close()
+    // open account
+    integer amt = 10
+    account a = open_account(amt) // (typecheck on failure...?)
+    // verify balance after open
+    test_equal(get_balance(a),amt,"get_balance(a) returns expected amount")
+    // close account
+    test_equal(close_account(a),amt,"close_account(a) returns expected payout")
+    // verify balance no longer accessible
+    test_true(string(get_balance(a)),"balance not available on closed account")
+end procedure
+
+procedure test_sequential_open_deposit_close()
+    // open account
+    integer open_amt = 10
+    account a = open_account(open_amt)
+    // deposit
+    integer deposit_amt = 20,
+            new_amt = open_amt + deposit_amt
+    test_equal(make_deposit(a,deposit_amt),new_amt,"make_deposit(%d) returns expected amount",{deposit_amt})
+    // close account
+    test_equal(close_account(a),new_amt,"close_account() returns expected payout")
+    // verify deposits no longer accepted
+    test_true(string(make_deposit(a,1)),"make_deposit not available on closed account")
+end procedure
+
+procedure test_more_sequential_cases()
+    // open account 'a' as before
+    //  and account 'z' with zero balance
+    integer open_amt = 10
+    account a = open_account(open_amt),
+            z = open_account(0)
+    // attempt to open account with negative opening balance
+    object error_string = open_account(-10)
+    test_true(string(error_string),"open_account(-10) returns an error (%v)",{error_string})
+    // verify both balances a and z still there
+    test_equal(get_balance(a),open_amt,"get_balance(a) returns expected amount")
+    test_equal(get_balance(z),0,"get_balance(z) returns expected amount")
+    // withdrawals
+    integer withdrawal_amt = 3,
+          new_amt = open_amt - withdrawal_amt
+    test_equal(make_deposit(a,-withdrawal_amt),new_amt,"make_deposit(a,%d) returns expected balance",{-withdrawal_amt})
+    object ze = make_deposit(z,-1)
+    test_true(string(ze),"make_deposit(z,-1) returns an error (%v)",{ze})
+    // verify both balances
+    test_equal(get_balance(a),new_amt,"get_balance(a) returns expected balance")
+    test_equal(get_balance(z),0,"get_balance(z) returns expected balance")
+    // close just z
+    test_equal(close_account(z),0,"close_account(z) returns expected payout")
+    // verify 'a' balance one more time
+    test_equal(get_balance(a),new_amt,"get_balance(a) returns expected balance")
+end procedure
+
+integer close_cs = init_cs(),
+        already_closed = 0,
+        closed_ok = 0,
+        close_error = 0
+
+procedure test_concurrent_close()
+
+    nested procedure close_it(account a, integer open_amt)
+        object res = close_account(a)
+        enter_cs(close_cs)
+        if string(res) then
+            already_closed += 1
+        elsif res=open_amt then
+            closed_ok += 1
+        else
+            close_error += 1
+        end if
+        leave_cs(close_cs)
+    end nested procedure
+
+    // test competing close attempts
+    integer reps = 100, passes = 0
+    for rep=1 to reps do
+        integer open_amt = 10
+        account a = open_account(open_amt)
+        integer close_attempts = 10
+        sequence threads = {}
+        // (reset prior to each set of close_attempts)
+        already_closed = 0
+        closed_ok = 0
+        close_error = 0
+        for i=1 to close_attempts do
+            threads &= create_thread(close_it,{a,open_amt})
+        end for
+        wait_thread(threads)
+        if close_error!=0
+        or closed_ok!=1
+        or already_closed!=close_attempts-1 then
+            test_equal(close_error,0,"close error")
+            test_equal(closed_ok,1,"only one thread closes successfully")
+            test_equal(already_closed,close_attempts-1,"all other threads get already closed")
+        else
+            passes += 1
+        end if
+    end for
+    test_equal(passes,reps,"all concurrent close repetitions passed")
+end procedure
+
+integer dwc_cs = init_cs(),
+        deposit_error = 0,
+        deposit_ok = 0,
+        withdraw_ok = 0,
+        balance_error = 0,
+        balance_ok = 0
+
+procedure test_concurrent_deposits_and_withdrawals()
+
+    nested procedure deposit(account a, integer amt)
+        object res = make_deposit(a,amt)
+        enter_cs(dwc_cs)
+        if string(res) then
+            deposit_error += 1
+        else
+            deposit_ok += 1
+        end if
+        leave_cs(dwc_cs)
+    end nested procedure
+
+    nested procedure withdraw(account a, integer amt)
+        do
+            object res = make_deposit(a,amt)
+            if atom(res) then exit end if
+            sleep(0.01)
+        until false
+        enter_cs(dwc_cs)
+        withdraw_ok += 1
+        leave_cs(dwc_cs)
+    end nested procedure
+
+    nested procedure check_balance(account a)
+        object res = get_balance(a)
+        enter_cs(dwc_cs)
+        if string(res) or res<0 then
+            balance_error += 1
+        else
+            balance_ok += 1
+        end if
+        leave_cs(dwc_cs)
+    end nested procedure
+
+    account a = open_account(0)
+    integer amt = 10,
+           reps = 100
+    sequence threads = {}
+    // (reset in case multiple runs attempts)
+    deposit_error = 0
+    deposit_ok = 0
+    withdraw_ok = 0
+    balance_error = 0
+    balance_ok = 0
+
+    for i=1 to reps do
+        threads &= create_thread(deposit,{a,amt})
+        threads &= create_thread(withdraw,{a,-amt})
+        threads &= create_thread(check_balance,{a})
+    end for     
+    wait_thread(threads)
+    test_equal(deposit_error,0,"no deposit errors")
+    test_equal(deposit_ok,reps,"all deposits made")
+    test_equal(withdraw_ok,reps,"all widthdrawals made")
+    test_equal(balance_error,0,"no balance errors")
+    test_equal(balance_ok,reps,"all balances ok")
+end procedure
+
+
+set_test_verbosity(TEST_SHOW_ALL)
+
+test_sequential_open_balance_close()
+test_sequential_open_deposit_close()
+test_more_sequential_cases()
+test_concurrent_close()
+test_concurrent_deposits_and_withdrawals()
+
+test_summary()
+

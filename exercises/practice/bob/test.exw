@@ -1,0 +1,68 @@
+
+include bob.e
+
+--<do not edit>
+constant canonical_data = {
+{"Tom-ay-to, tom-aaaah-to.","Whatever.","stating something"},
+{"WATCH OUT!","Whoa, chill out!","shouting"},
+{"FCECDFCAAB","Whoa, chill out!","shouting gibberish"},
+{"Does this cryogenic chamber make me look fat?","Sure.","asking a question"},
+{"You are, what, like 15?","Sure.","asking a numeric question"},
+{"fffbbcbeab?","Sure.","asking gibberish"},
+{"Hi there!","Whatever.","talking forcefully"},
+{`It's OK if you don't want to go work for NASA.`,"Whatever.","using acronyms in regular speech"},
+{`WHAT'S GOING ON?`,`Calm down, I know what I'm doing!`,"forceful question"},
+{"1, 2, 3 GO!","Whoa, chill out!","shouting numbers"},
+{"1, 2, 3","Whatever.","no letters"},
+{"4?","Sure.","question with no letters"},
+{"ZOMG THE %^*@#$(*^ ZOMBIES ARE COMING!!11!!1!","Whoa, chill out!","shouting with special characters"},
+{"I HATE THE DENTIST","Whoa, chill out!","shouting with no exclamation mark"},
+{"Ending with ? means a question.","Whatever.","statement containing question mark"},
+{":) ?","Sure.","non-letters with question"},
+{"Wait! Hang on. Are you going to be OK?","Sure.","prattling on"},
+{"","Fine. Be that way!","silence"},
+{"          ","Fine. Be that way!","prolonged silence"},
+{"\t\t\t\t\t\t\t\t\t\t","Fine. Be that way!","alternate silence"},
+{"\nDoes this cryogenic chamber make me look fat?\nNo.","Whatever.","multiple line question"},
+{"         hmmmmmmm...","Whatever.","starting with whitespace"},
+{"Okay if like my  spacebar  quite a bit?   ","Sure.","ending with whitespace"},
+{"\n\r \t","Fine. Be that way!","other whitespace"},
+{"This is a statement ending with whitespace      ","Whatever.","non-question ending with whitespace"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+
+for t in canonical_data do
+    string {input, expected, desc} = t
+    test_equal(hey(input),expected,desc)
+end for
+
+--test_equal(hey("Tom-ay-to, tom-aaaah-to."),        "Whatever.", "stating something")
+--test_equal(hey("WATCH OUT!"),                 "Whoa, chill out!", "shouting")
+--test_equal(hey("FCECDFCAAB"),                   "Whoa, chill out!", "shouting gibberish")
+--test_equal(hey("You are, what, like 15?"),                       "Sure.", "asking a numeric question")
+--test_equal(hey("fffbbcbeab?"),                                     "Sure.", "asking gibberish")
+--test_equal(hey("Hi there!"),                                 "Whatever.", "talking forcefully")
+--test_equal(hey("Ending with ? means a question."),                 "Whatever.", "statement containing question mark")
+--test_equal(hey("It's OK if you don't want to go work for NASA."),  "Whatever.", "using acronyms in regular speech")
+--test_equal(hey("Does this cryogenic chamber make me look fat?"),       "Sure.", "asking a question")
+--test_equal(hey("Wait! Hang on. Are you going to be OK?"),                "Sure.", "prattling on")
+--test_equal(hey("\nDoes this cryogenic chamber make me look fat?\nNo."), "Whatever.", "multiple line question")
+--test_equal(hey("ZOMG THE %^*@#$(*^ ZOMBIES ARE COMING!!11!!1!"), "Whoa, chill out!", "shouting with special characters")
+--test_equal(hey("1, 2, 3 GO!"),                                    "Whoa, chill out!", "shouting numbers")
+--test_equal(hey("\n\n \t"),                                     "Fine. Be that way!", "other whitespace")
+--test_equal(hey("WHAT'S GOING ON?"),        "Calm down, I know what I'm doing!", "forceful question")
+--test_equal(hey("I HATE THE DENTIST"),                     "Whoa, chill out!",  "shouting with no exclamation mark")
+--test_equal(hey("1, 2, 3"),                                         "Whatever.",  "no letters")
+--test_equal(hey("4?"),                                            "Sure.",  "question with no letters")
+--test_equal(hey(":) ?"),                                         "Sure.", "non-letters with question")
+--test_equal(hey(""),                                 "Fine. Be that way!", "silence")
+--test_equal(hey("          "),                        "Fine. Be that way!", "prolonged silence")
+--test_equal(hey("\t\t\t\t\t\t\t\t\t\t"),               "Fine. Be that way!", "alternate silence")
+--test_equal(hey("         hmmmmmmm..."),                         "Whatever.", "starting with whitespace")
+--test_equal(hey("Okay if like my  spacebar  quite a bit?   "),        "Sure.", "ending with whitespace")
+--test_equal(hey("This is a statement ending with whitespace      "), "Whatever.", "non-question ending with whitespace")
+ 
+test_summary()
+

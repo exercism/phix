@@ -1,0 +1,40 @@
+include allergies.e
+
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+--set_test_verbosity(TEST_SHOW_FAILED)
+
+constant ttf = {{"eggs", {1,3,2}},
+                {"peanuts", {2,7,5}},
+                {"shellfish", {4,14,10}},
+                {"strawberries", {8,28,20}},
+                {"tomatoes", {16,56,40}},
+                {"chocolate", {32,112,80}},
+                {"pollen", {64,224,160}},
+                {"cats", {128,192,64}}}
+
+for a3 in ttf do
+    string allergen = a3[1]; a3 = a3[2]
+    test_false(allergic_to(allergen, 0),"not allergic to anything")
+    test_true(allergic_to(allergen, a3[1]),"allergic only to %s",{allergen})
+    test_true(allergic_to(allergen, a3[2]),"allergic to %s and something else",{allergen})
+    test_false(allergic_to(allergen,a3[3]),"allergic to something, but not %s",{allergen})
+    test_true(allergic_to(allergen, 255),"allergic to everything")
+end for
+
+test_equal({}, list(0),"no allergies")
+test_equal({"eggs"}, list(1),"just eggs")
+test_equal({"peanuts"}, list(2),"just peanuts")
+test_equal({"strawberries"}, list(8),"just strawberries")
+test_equal({"eggs", "peanuts"}, list(3),"eggs and peanuts")
+test_equal({"eggs", "shellfish"}, list(5),"more than eggs but not peanuts")
+test_equal({"strawberries","tomatoes","chocolate","pollen","cats"}, list(248),"lots of stuff")
+test_equal({"eggs","peanuts","shellfish","strawberries","tomatoes","chocolate","pollen","cats"}, list(255),"everything")
+test_equal({"eggs","shellfish","strawberries","tomatoes","chocolate","pollen","cats"}, list(509),"no allergen score parts")
+test_equal({"eggs"}, list(257),"no allergen score parts without highest valid score")
+test_summary()
+
+
