@@ -1,7 +1,7 @@
 --
 -- Version 1, using native atoms (80-bit, with 64 bits of precision)
 -- =================================================================
---/!*
+--/*
 requires(64) -- does not work on 32-bit: versions 2 & 3 below /do/.
              -- note that under -nopause this will automatically
              -- re-run using a 64-bit Phix if it can find one, and
@@ -15,12 +15,12 @@ end function
 global function totalgrains() 
     return power(2,64)-1
 end function 
---*!/
+--*/
 
 --
 -- Version 2, using mpfr & returning strings
 -- =========================================
---/*
+--/!*
 include mpfr.e
 
 global function square(integer n)
@@ -38,7 +38,7 @@ global function totalgrains()
     mpz_sub_si(z,z,1)
     return mpz_get_str(z)
 end function 
---*/
+--*!/
 
 --
 -- Version 3, building strings manually
