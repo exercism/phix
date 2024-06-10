@@ -135,7 +135,8 @@ printf(1,"DATA:\n%s\n",{join(lines,"<\n")})
 {} = print_json(1,json)
 ?message
 ?res
-if res then abort(res) end if
+--if res then abort(res) end if
+if res then crash(status) end if
 
 end procedure
 
