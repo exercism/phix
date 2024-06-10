@@ -74,11 +74,11 @@ FILETYPE_DIRECTORY (2) if filename
 
     printf(1, "%s: testing...", {slug})
     assert(copy_file(meta_src,temp_src,true),"cannot copy "&meta_src&" to "&temp_src)
-printf(1, "copied %s to %s\n", {meta_src,temp_src})
+--printf(1, "copied %s to %s\n", {meta_src,temp_src})
 --  assert(copy_file(test_src,tmp_dir,true),"cannot copy "&test_src&" to "&tmp_dir)
     assert(copy_file(test_src,tmp_file,true),"cannot copy "&test_src&" to "&tmp_file)
 --printf(1, "copied %s to %s\n", {test_src,tmp_dir})
-printf(1, "copied %s to %s\n", {test_src,tmp_file})
+--printf(1, "copied %s to %s\n", {test_src,tmp_file})
 
     if file_exists(lib_dir) then
         assert(copy_directory(lib_dir,temp_lib,true),"cannot copy "&lib_dir&" to "&temp_lib)
@@ -104,7 +104,7 @@ printf(1, "copied %s to %s\n", {test_src,tmp_file})
 
     string status = "pass", message = ""
 
-printf(1,"DATA:\n%s\n",{join(lines,"<\n")})
+--printf(1,"DATA:\n%s\n",{join(lines,"<\n")})
     integer begins_hat = 0, begins_3 = 0, crashmsg = false
     for i,l in lines do
         if begins_hat=0
@@ -159,11 +159,11 @@ printf(1,"DATA:\n%s\n",{join(lines,"<\n")})
     assert(pjres!=0,"bad json??")
     close(ofn)
 --temp:
-{} = print_json(1,json)
-?message
-?res
+--{} = print_json(1,json)
+--?message
+--?res
 --if res then abort(res) end if
-if res then crash(status) end if
+    if res!=0 then crash(status) end if
 
 end procedure
 
