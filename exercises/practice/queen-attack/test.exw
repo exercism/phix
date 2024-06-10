@@ -1,0 +1,42 @@
+include queen-attack.e
+
+-- I'm using "c3" not {2,2}, "here" not {-2,2},
+--  and type queen so t/f not 0/"error", plus
+--  several tests not in the canonical data.
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+
+test_false(queen("b9"),"off board")
+test_false(queen("a0"),"off board")
+test_false(queen("i5"),"off board")
+test_false(queen("here"),"invalid")
+test_false(queen(""),"empty")
+test_true(queen("c3"),"ok")
+test_true(queen("a1"),"ok")
+test_true(queen("h8"),"ok")
+test_false(can_attack("b3","d7"),"no attack")
+test_false(can_attack("c5","g7"),"no attack")
+test_false(can_attack("a1","f8"),"no attack")
+test_true(can_attack("b4","b7"),"same file")
+test_true(can_attack("e4","b4"),"same rank")
+test_true(can_attack("e4","b4"),"common diagonals")
+test_true(can_attack("c3","a5"),"common diagonals")
+test_true(can_attack("a1","f6"),"common diagonals")
+test_true(can_attack("c3","d2"),"common diagonals")
+test_true(can_attack("c3","b2"),"common diagonals")
+test_true(can_attack("b8","a7"),"common diagonals")
+test_true(can_attack("a6","b7"),"common diagonals")
+test_true(can_attack("d1","f3"),"common diagonals")
+test_true(can_attack("f1","a6"),"common diagonals")
+test_true(can_attack("a1","h8"),"common diagonals")
+test_true(can_attack("a8","h1"),"common diagonals")
+test_false(can_attack("e2","c6"),"no attack")
+test_false(can_attack("e2","c6"),"no attack")
+test_equal(can_attack("b4","b4"),"same square!","same square")
+
+test_summary()
+
+

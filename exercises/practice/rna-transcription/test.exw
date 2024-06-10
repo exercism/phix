@@ -1,0 +1,20 @@
+include rna-transcription.e
+
+--<do not edit>
+constant canonical_data = {
+{"","","Empty RNA sequence"},
+{"C","G","RNA complement of cytosine is guanine"},
+{"G","C","RNA complement of guanine is cytosine"},
+{"T","A","RNA complement of thymine is adenine"},
+{"A","U","RNA complement of adenine is uracil"},
+{"ACGTGGTCTTAA","UGCACCAGAAUU","RNA complement"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    string {dna,expected,desc} = t
+    test_equal(to_rna(dna),expected,desc)
+end for
+test_summary()
+

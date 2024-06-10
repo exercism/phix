@@ -1,0 +1,26 @@
+include run-length-encoding.e
+
+-- (split encode/decode/both, first two sets replicated, no encoded for the latter...)
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+constant canonical_data = {
+{"","","empty string"},
+{"XYZ","XYZ","single characters only are encoded without count"},
+{"AABBBCCCC","2A3B4C","string with no single characters"},
+{"WWWWWWWWWWWWBWWWWWWWWWWWWBBBWWWWWWWWWWWWWWWWWWWWWWWWB","12WB12W3B24WB","single characters mixed with repeated characters"},
+{"  hsqq qww  ","2 hs2q q2w2 ","multiple whitespace mixed in string"},
+{"aabbbcccc","2a3b4c","lowercase characters"},
+{"zzz ZZ  zZ","3z 2Z2 zZ","encode followed by decode gives original string"},
+}
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    string {text, expected, desc} = t
+    test_equal(run_length_encode(text),expected,desc)
+  if text!=expected then
+    test_equal(run_length_decode(expected),text,desc)
+  end if
+end for
+test_summary()
+

@@ -1,0 +1,24 @@
+include resistor-color-trio.e
+
+--<do not edit>
+constant canonical_data = {
+{{"orange","orange","black"},`33 ohms`,"Orange and orange and black"},
+{{"blue","grey","brown"},`680 ohms`,"Blue and grey and brown"},
+{{"red","black","red"},`2 kiloohms`,"Red and black and red"},
+{{"green","brown","orange"},`51 kiloohms`,"Green and brown and orange"},
+{{"yellow","violet","yellow"},`470 kiloohms`,"Yellow and violet and yellow"},
+{{"blue","violet","blue"},`67 megaohms`,"Blue and violet and blue"},
+{{"black","black","black"},`0 ohms`,"Minimum possible value"},
+{{"white","white","white"},`99 gigaohms`,"Maximum possible value"},
+{{"black","grey","black"},`8 ohms`,"First two colors make an invalid octal number"},
+{{"blue","green","yellow","orange"},`650 kiloohms`,"Ignore extra colors"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    {sequence colours, string expected, string desc} = t
+    test_equal(label(colours),expected,desc)
+end for
+test_summary()
+

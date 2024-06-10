@@ -1,0 +1,17 @@
+{
+  "authors": [
+    "petelomax"
+  ],
+  "files": {
+    "solution": [
+      "react.e"
+    ],
+    "test": [
+      "test.exw"
+    ],
+    "example": [
+      ".meta/example.e"
+    ]
+  },
+  "blurb": "Implement a basic reactive system."
+}

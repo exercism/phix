@@ -599,6 +599,118 @@
         "practices": [],
         "prerequisites": [],
         "difficulty": 5
+      },
+      {
+        "slug": "queen-attack",
+        "name": "Queen Attack",
+        "uuid": "3acc8c54-46d5-41a9-b793-a986ef56b3d3",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "rna-transcription",
+        "name": "RNA Transcription",
+        "uuid": "9c734921-b6ed-4025-a136-69558734c865",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "rail-fence-cipher",
+        "name": "Rail Fence Cipher",
+        "uuid": "b4321bfd-1ed3-45f3-86bb-4f62d30fde1c",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 4
+      },
+      {
+        "slug": "raindrops",
+        "name": "Raindrops",
+        "uuid": "a8a854c0-8797-42cb-a277-2e52e0be2fb6",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "react",
+        "name": "React",
+        "uuid": "d3e0fff0-ff6b-4d42-9fa0-6c072052024d",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 8
+      },
+      {
+        "slug": "resistor-color",
+        "name": "Resistor Color",
+        "uuid": "ad07e62e-4b1a-411a-aaa6-7cb8ea14a9bb",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "resistor-color-duo",
+        "name": "Resistor Color Duo",
+        "uuid": "32b4d1b8-fb6d-48e2-81c4-cd22e47b312c",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "resistor-color-trio",
+        "name": "Resistor Color Trio",
+        "uuid": "fa8a6b27-e10a-4bce-a730-fff7c3a192de",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "reverse-string",
+        "name": "Reverse String",
+        "uuid": "1e62fd43-ef9b-4966-986d-0a972f343cbb",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "robot-name",
+        "name": "Robot Name",
+        "uuid": "b275046e-caa4-4efd-96e0-7222f7d03be9",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 6
+      },
+      {
+        "slug": "robot-simulator",
+        "name": "Robot Simulator",
+        "uuid": "4236506c-988e-424a-bccd-c39cd24987da",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "roman-numerals",
+        "name": "Roman Numerals",
+        "uuid": "7047cda5-3787-4cc0-86ae-fca628f798c8",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "rotational-cipher",
+        "name": "Rotational Cipher",
+        "uuid": "fb6d690c-37f6-4e8a-8c16-28e4b6a18289",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 4
+      },
+      {
+        "slug": "run-length-encoding",
+        "name": "Run-Length Encoding",
+        "uuid": "8f06cf66-b909-4732-8cfd-e2e041e29f2f",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 4
       }
     ]
   },

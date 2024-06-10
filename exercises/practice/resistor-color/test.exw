@@ -1,0 +1,21 @@
+include resistor-color.e
+
+--<do not edit>
+constant canonical_data = {
+{"black",0,"Black"},
+{"white",9,"White"},
+{"orange",3,"Orange"},
+{0,{"black","brown","red","orange","yellow","green","blue","violet","grey","white"},"Colors"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    {object code, object expected, string desc} = t
+    if string(code) then
+        test_equal(color_code(code),expected,desc)
+    else
+        test_equal(colors(),expected,desc)
+    end if
+end for
+test_summary()

@@ -1,0 +1,256 @@
+include react.e
+
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+--set_test_verbosity(TEST_SHOW_FAILED)
+
+// Setting the value of an input cell changes the observable Value()
+procedure test_set_input()
+    reactor r := new_reactor()
+    cell i := create_input(r, 1)
+    test_equal(get_value(i), 1, "cell value matches initial value")
+    set_value(i, 2)
+    test_equal(get_value(i), 2, "call value maitches changed value")
+end procedure
+
+-- used in multiple tests:
+function plus1(integer v) return v+1 end function
+function minus1(integer v) return v-1 end function
+function mul(integer v1, v2) return v1*v2 end function
+
+// The value of a compute 1 cell is determined by the value of the dependencies.
+procedure test_basic_compute1()
+    reactor r := new_reactor()
+    cell i := create_input(r, 1)
+    cell c := create_compute1(r, i, plus1)
+    test_equal(get_value(c), 2, "get_value(c) is properly computed based on initial input cell value")
+    set_value(i, 2)
+    test_equal(get_value(c), 3, "get_value(c) is properly computed based on changed input cell value")
+end procedure
+
+// The value of a compute 2 cell is determined by the value of the dependencies.
+procedure test_basic_compute2()
+    reactor r := new_reactor()
+    cell i1 := create_input(r, 1),
+         i2 := create_input(r, 2),
+         c := create_compute2(r, i1, i2, or_bits)
+    test_equal(get_value(c), 3, "get_value(c) is properly computed based on initial input cell values")
+    set_value(i1, 4)
+    test_equal(get_value(c), 6, "get_value(c) is properly computed when first input cell value changes")
+    set_value(i2, 8)
+    test_equal(get_value(c), 12, "get_value(c) is properly computed when second input cell value changes")
+end procedure
+
+// Compute 2 cells can depend on compute 1 cells.
+procedure test_compute2_diamond()
+    reactor r := new_reactor()
+    cell i := create_input(r, 1),
+         c1 := create_compute1(r, i, plus1),
+         c2 := create_compute1(r, i, minus1),
+         c3 := create_compute2(r, c1, c2, mul)
+    test_equal(get_value(c3), 0, "get_value(c3) is properly computed based on initial input cell value")
+    set_value(i, 3)
+    test_equal(get_value(c3), 8, "get_value(c3) is properly computed based on changed input cell value")
+end procedure
+
+// Compute 1 cells can depend on other compute 1 cells.
+procedure test_compute1_chain()
+    nested function t10pd(integer v, d) return v*10+d end nested function
+    nested function compute1i(integer fn, cell dep, integer i)
+        return fn(get_value(dep),i)
+    end nested function
+    reactor r := new_reactor()
+    cell inp := create_input(r, 1), c = inp
+    for i=2 to 8 do
+         c = create_compute(r, define_lambda(compute1i,{t10pd,c,i}))
+    end for
+    test_equal(get_value(c), 12345678, "get_value(c) is properly computed based on initial input cell value")
+    set_value(inp, 9)
+    test_equal(get_value(c), 92345678, "get_value(c) is properly computed based on changed input cell value")
+end procedure
+
+// Compute 2 cells can depend on other compute 2 cells.
+procedure test_compute2_tree()
+    nested function add(integer v1, v2) return v1+v2 end nested function
+    reactor r := new_reactor()
+    sequence ins = {}, first_level = {}
+    for v in {1,10,100} do
+         ins = append(ins,create_input(r, v))
+    end for
+    for i=1 to 2 do
+        first_level = append(first_level,create_compute2(r, ins[i], ins[i+1], add))
+    end for
+    cell output := create_compute2(r, first_level[1], first_level[2], add)
+    test_equal(get_value(output), 121, "output is properly computed based on initial input cell values")
+    for c in ins do
+        set_value(c, get_value(c) * 2)
+    end for
+    test_equal(get_value(output), 242, "output is properly computed based on changed input cell values")
+end procedure
+
+-- (nb used in >1 tests:)
+sequence observed = {}
+procedure observe(integer v) observed &= v end procedure
+integer observed_called = 0
+procedure observe_count(integer v) observed_called += 1 end procedure
+
+// Compute cells can have callbacks.
+procedure test_basic_callback()
+    reactor r := new_reactor()
+    cell i := create_input(r, 1),
+         c := create_compute1(r, i, plus1)
+    observed = {}
+    {} = add_callback(c,observe)
+    test_true(length(observed)==0,"callback called before changes were made")
+    set_value(i, 2)
+    test_true(length(observed)==1,"callback called when changes were made")
+    test_equal(observed,{3},"callback called with proper value")
+end procedure
+
+// Callbacks and only trigger on change.
+procedure test_only_call_on_changes()
+    nested function plus1or2(integer v) return iff(v>3?v+1:2) end nested function
+    reactor r := new_reactor()
+    cell i := create_input(r, 1),
+         c := create_compute1(r, i, plus1or2)
+    observed_called = 0
+    {} = add_callback(c,observe_count)
+    set_value(i, 1)
+    test_equal(observed_called, 0, "observe_count called even though input didn't change")
+    set_value(i, 2)
+    test_equal(observed_called, 0, "observe_count called even though computed value didn't change")
+end procedure
+
+// Callbacks can be added and removed.
+procedure test_callback_add_remove()
+    reactor r := new_reactor()
+    cell i := create_input(r, 1),
+         c := create_compute1(r, i, plus1)
+    observed = {}
+    canceler cb1 := add_callback(c,observe)
+    observed_called = 0
+    {} = add_callback(c,observe_count)
+    set_value(i, 2)
+    test_equal(observed,{3},"observe not properly called")
+    test_equal(observed_called,1,"observe_count not properly called")
+    cancel(cb1)
+    set_value(i, 3)
+    test_true(length(observed)==1, "observed called after removal")
+    test_equal(observed_called,2,"observe_count not properly called after first callback removal")
+end procedure
+
+sequence calls = {}
+procedure inc_calls(integer i) calls[i] += 1 end procedure
+
+procedure test_multiple_callback_removal()
+    reactor r := new_reactor()
+    cell i := create_input(r, 1),
+         c := create_compute1(r, i, plus1)
+    integer n = 5
+    calls = repeat(0,n)
+    sequence cancelers = repeat(0,n)
+    for k=1 to n do
+        cancelers[k] = add_callback(c,inc_calls,{k})
+    end for
+    set_value(i, 2)
+    for k=1 to n do
+        test_true(calls[k]==1,sprintf("callback %d/%d should be called 1 time, was called %d times", {k, n, calls[k]}))
+        cancel(cancelers[k])
+    end for
+    set_value(i, 3)
+    for k=1 to n do
+        test_true(calls[k]==1,sprintf("callback %d/%d was called after it was removed", {k, n}))
+    end for
+end procedure
+
+-- PL: Idempotency is a property of certain operations or API requests, which guarantees that performing 
+--      the operation multiple times will yield the same result as if it was executed only once.
+
+procedure test_remove_idempotence()
+    reactor r := new_reactor()
+    cell inp := create_input(r, 1),
+         out := create_compute1(r, inp, plus1)
+
+    observed_called = 0
+    canceler cb1 := add_callback(out,observe)
+    {} = add_callback(out,observe_count)
+    for i=1 to 10 do
+        cancel(cb1)
+    end for
+    set_value(inp, 2)
+    test_true(observed_called==1,"remaining callback function was still called")
+end procedure
+
+// Callbacks should only be called once even though multiple dependencies have changed.
+procedure test_only_call_once_on_multiple_dep_changes()
+    reactor r := new_reactor()
+    cell i := create_input(r, 1),
+         c1 := create_compute1(r, i, plus1),
+         c2 := create_compute1(r, i, minus1),
+         c3 := create_compute1(r, c2, minus1),
+         c4 := create_compute2(r, c1, c3, mul)
+    observed_called = 0
+    {} = add_callback(c4,observe_count)
+    set_value(i, 3)
+    test_true(observed_called>0,"callback function was called")
+    test_true(observed_called==1,"callback function was called just once")
+end procedure
+
+// Callbacks should not be called if dependencies change in such a way
+// that the final value of the compute cell does not change.
+procedure test_no_call_on_dep_changes_resulting_in_no_change()
+    nested function diff(integer v1, v2) return v1-v2 end nested function
+    reactor r := new_reactor()
+    cell input := create_input(r, 0),
+         iplus1 := create_compute1(r, input, plus1),
+         iless1 := create_compute1(r, input, minus1),
+         output := create_compute2(r, iplus1, iless1, diff)
+    // The output's value is always 2, no matter what the input is.
+    observed_called = 0
+    {} = add_callback(output,observe_count)
+    set_value(input, 5)
+    test_equal(observed_called,0,"callback function called even though computed value didn't change")
+end procedure
+
+// Callbacks on the same cell can be added and removed independently.
+// Note this puts callbacks on an input cell, which (at the mo) the Go version prohibits
+procedure test_multiple_callbacks_on_a_single_cell()
+    reactor r := new_reactor()
+    cell i := create_input(r, 1)
+    observed_called = 0
+    canceler c1 := add_callback(i,observe_count),
+             c2 := add_callback(i,observe_count),
+             c3 := add_callback(i,observe_count)
+    set_value(i, 2)
+    test_equal(observed_called,3,"all three callbacks invoked")
+    cancel(c1)
+    set_value(i, 3)
+    test_equal(observed_called,5,"first canceler works")
+    cancel(c2)
+    set_value(i, 4)
+    test_equal(observed_called,6,"second canceler works")
+    cancel(c3)
+    set_value(i, 5)
+    test_equal(observed_called,6,"third canceler works")
+end procedure
+
+
+test_set_input()
+test_basic_compute1()
+test_basic_compute2()
+test_compute2_diamond()
+test_compute1_chain()
+test_compute2_tree()
+test_basic_callback()
+test_only_call_on_changes()
+test_callback_add_remove()
+test_multiple_callback_removal()
+test_remove_idempotence()
+test_only_call_once_on_multiple_dep_changes()
+test_no_call_on_dep_changes_resulting_in_no_change()
+test_multiple_callbacks_on_a_single_cell()
+test_summary()
+

@@ -1,0 +1,19 @@
+{
+  "authors": [
+    "petelomax"
+  ],
+  "files": {
+    "solution": [
+      "run-length-encoding.e"
+    ],
+    "test": [
+      "test.exw"
+    ],
+    "example": [
+      ".meta/example.e"
+    ]
+  },
+  "blurb": "Implement run-length encoding and decoding.",
+  "source": "Wikipedia",
+  "source_url": "https://en.wikipedia.org/wiki/Run-length_encoding"
+}

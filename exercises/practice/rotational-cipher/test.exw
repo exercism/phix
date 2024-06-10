@@ -1,0 +1,24 @@
+include rotational-cipher.e
+
+--<do not edit>
+constant canonical_data = {
+{"a",0,"a","rotate a by 0, same output as input"},
+{"a",1,"b","rotate a by 1"},
+{"a",26,"a","rotate a by 26, same output as input"},
+{"m",13,"z","rotate m by 13"},
+{"n",13,"a","rotate n by 13 with wrap around alphabet"},
+{"OMG",5,"TRL","rotate capital letters"},
+{"O M G",5,"T R L","rotate spaces"},
+{"Testing 1 2 3 testing",4,"Xiwxmrk 1 2 3 xiwxmrk","rotate numbers"},
+{`Let's eat, Grandma!`,21,`Gzo'n zvo, Bmviyhv!`,"rotate punctuation"},
+{"The quick brown fox jumps over the lazy dog.",13,"Gur dhvpx oebja sbk whzcf bire gur ynml qbt.","rotate all letters"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    {string text, integer shift, string expected, string desc} = t
+    test_equal(rotational_cipher(text,shift),expected,desc)
+end for
+test_summary()
+

@@ -1,0 +1,77 @@
+atom t0 = time(), quit_time = t0+5
+
+include robot-name.e
+
+set_test_verbosity(TEST_SHOW_ALL)
+
+constant MAX_ROBOTS = 26*26*1000 -- 676000
+
+sequence seen = repeat(false,MAX_ROBOTS)
+integer seen_count = 0
+
+function name_to_idx(string name)
+    if length(name)=5 then
+        integer l1 = name[1]-'A',
+                l2 = name[2]-'A',
+                d3 = to_integer(name[3..5],-1)
+        if l1>=0 and l1<=25
+        and l2>=0 and l2<=25
+        and d3!=-1 then
+            return (l1*26+l2)*1000+d3+1
+        end if
+    end if
+    return 0
+end function
+assert(name_to_idx("AA000")=1)
+assert(name_to_idx("AA001")=2)
+assert(name_to_idx("ZZ998")=675999)
+assert(name_to_idx("ZZ999")=676000)
+
+function check_name(robot r, bool logtest=true)
+    -- test helper to log names as seen, and log errors, and optionally passes
+    string name = get_name(r)
+    integer idx = name_to_idx(name)
+    if idx=0 then
+        test_fail("bad name: "&name)  -- (just use get_name() if this not wanted)
+    elsif seen[idx] then
+        test_fail("Name %s reissued after %d robots.", {name, seen_count})
+    else
+        if logtest then test_pass("Name (%s) not reissued.", {name}) end if
+        seen_count += 1
+        seen[idx] = true
+    end if
+    return name
+end function
+
+robot r = new_robot(),
+     r2 = new_robot()
+string name = check_name(r),
+      name2 = get_name(r)
+test_equal(name,name2,"Robot name stays same.")
+name2 = check_name(r2)
+test_not_equal(name,name2,"Robots do not get the same name.")
+
+reset(r)
+test_not_equal(name,check_name(r),"Robot name cleared on reset.")
+
+bool completed = true
+for i=seen_count+1 to MAX_ROBOTS do
+    r = new_robot()
+    if i<100000 or rmdr(i,100)=0 then
+        name = check_name(r,false)
+        if time()>quit_time then
+            completed = false
+            exit
+        end if
+    end if
+end for
+test_equal(name2,get_name(r2),"stress test does not rename r2")
+string c = iff(completed?"completed":"[incomplete]")
+test_pass("stress test %s (%s)",{c,elapsed(time()-t0)})
+if completed then
+--  assert(seen_count==MAX_ROBOTS) -- (OK/only when we check_name() the lot)
+--                                 -- (but then stress test is 2.5s vs 0.5s)
+    test_equal(new_robot(),0,"no more robots")
+end if
+test_summary()
+

@@ -1,0 +1,40 @@
+include roman-numerals.e
+
+--<do not edit>
+constant canonical_data = {
+{1,"I","1 is I"},
+{2,"II","2 is II"},
+{3,"III","3 is III"},
+{4,"IV","4 is IV"},
+{5,"V","5 is V"},
+{6,"VI","6 is VI"},
+{9,"IX","9 is IX"},
+{16,"XVI","16 is XVI"},
+{27,"XXVII","27 is XXVII"},
+{48,"XLVIII","48 is XLVIII"},
+{49,"XLIX","49 is XLIX"},
+{59,"LIX","59 is LIX"},
+{66,"LXVI","66 is LXVI"},
+{93,"XCIII","93 is XCIII"},
+{141,"CXLI","141 is CXLI"},
+{163,"CLXIII","163 is CLXIII"},
+{166,"CLXVI","166 is CLXVI"},
+{402,"CDII","402 is CDII"},
+{575,"DLXXV","575 is DLXXV"},
+{666,"DCLXVI","666 is DCLXVI"},
+{911,"CMXI","911 is CMXI"},
+{1024,"MXXIV","1024 is MXXIV"},
+{1666,"MDCLXVI","1666 is MDCLXVI"},
+{3000,"MMM","3000 is MMM"},
+{3001,"MMMI","3001 is MMMI"},
+{3888,"MMMDCCCLXXXVIII","3888 is MMMDCCCLXXXVIII"},
+{3999,"MMMCMXCIX","3999 is MMMCMXCIX"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    {integer n, string expected, string desc} = t
+    test_equal(roman(n), expected, desc)
+end for
+test_summary()

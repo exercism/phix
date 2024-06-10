@@ -1,0 +1,20 @@
+include resistor-color-duo.e
+
+--<do not edit>
+constant canonical_data = {
+{{"brown","black"},10,"Brown and black"},
+{{"blue","grey"},68,"Blue and grey"},
+{{"yellow","violet"},47,"Yellow and violet"},
+{{"white","red"},92,"White and red"},
+{{"orange","orange"},33,"Orange and orange"},
+{{"green","brown","orange"},51,"Ignore additional colors"},
+{{"black","brown"},1,"Black and brown, one-digit"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    {sequence colors, integer expected, string desc} = t
+    test_equal(resistor(colors),expected,desc)
+end for
+test_summary() 

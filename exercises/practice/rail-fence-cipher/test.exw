@@ -1,0 +1,24 @@
+include rail-fence-cipher.e
+
+--<do not edit>
+constant canonical_data = {
+{"XOXOXOXOXOXOXOXOXO",2,"XXXXXXXXXOOOOOOOOO","encode with two rails"},
+{"WEAREDISCOVEREDFLEEATONCE",3,"WECRLTEERDSOEEFEAOCAIVDEN","encode with three rails"},
+{"EXERCISES",4,"ESXIEECSR","encode with ending in the middle"},
+{"THEDEVILISINTHEDETAILS",3,"TEITELHDVLSNHDTISEIIEA","decode with three rails"},
+{"EXERCISMISAWESOME",5,"EIEXMSMESAORIWSCE","decode with five rails"},
+{"112358132134558914423337761098715972584418167651094617711286",6,"133714114238148966225439541018335470986172518171757571896261","decode with six rails"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    integer rails = t[2]
+    string {msg,expected,desc} = extract(t,{1,3,4}),
+            actual = encode(msg,rails),
+            dmsg = decode(actual,rails)
+    test_equal(actual,expected,desc)
+    test_equal(dmsg,msg,"decode:"&desc)
+end for
+test_summary()
+
