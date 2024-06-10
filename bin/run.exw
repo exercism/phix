@@ -22,6 +22,7 @@ procedure process()
 //         out_dir = iff(cll=5?cl[5]:iff(platform()=WINDOWS?getenv("TMP"):"/tmp")),
            lib_dir = join_path({sol_dir, "lib"}),
            tmp_dir = join_path({out_dir, slug}),
+           tmp_file = join_path({tmp_dir, "test.exw"}),
            meta_src = join_path({sol_dir, ".meta", "example.e"}),
            temp_src = join_path({tmp_dir, slug & ".e"}),
 --         temp_src = join_path({out_dir, slug & ".e"}),
@@ -74,8 +75,10 @@ FILETYPE_DIRECTORY (2) if filename
     printf(1, "%s: testing...", {slug})
     assert(copy_file(meta_src,temp_src,true),"cannot copy "&meta_src&" to "&temp_src)
 printf(1, "copied %s to %s\n", {meta_src,temp_src})
-    assert(copy_file(test_src,tmp_dir,true),"cannot copy "&test_src&" to "&tmp_dir)
-printf(1, "copied %s to %s\n", {test_src,tmp_dir})
+--  assert(copy_file(test_src,tmp_dir,true),"cannot copy "&test_src&" to "&tmp_dir)
+    assert(copy_file(test_src,tmp_dir,true),"cannot copy "&test_src&" to "&tmp_file)
+--printf(1, "copied %s to %s\n", {test_src,tmp_dir})
+printf(1, "copied %s to %s\n", {test_src,tmp_file})
 
     if file_exists(lib_dir) then
         assert(copy_directory(lib_dir,temp_lib,true),"cannot copy "&lib_dir&" to "&temp_lib)
