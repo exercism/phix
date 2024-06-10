@@ -1,0 +1,22 @@
+include high-scores.e
+
+-- (erm, canonical_data has "scores" which is apparently just "return scores"....)
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+test_equal(latest({100,0,90,30}), 30, "Latest score")
+
+test_equal(personal_best({100,0,90,30}), 100, "Personal best")
+test_equal(personal_best({40,100,70}), 100, "Personal best2")
+test_equal(personal_top_three({0,90,30,100,20,10,0,30,40,40,70,70}), {100,90,70}, "Personal top three from a list of scores")
+test_equal(personal_top_three({10,30,90,30,100,20,10,0,30,40,40,70,70}), {100,90,70}, "Personal top three from a list of scores")
+test_equal(personal_top_three({20,10,30}), {30,20,10}, "Personal top three highest to lowest")
+test_equal(personal_top_three({40,20,40,30}), {40,40,30}, "Personal top three when there is a tie")
+test_equal(personal_top_three({30,70}), {70,30}, "Personal top three when there are less than three")
+test_equal(personal_top_three({40}), {40}, "Personal top three when there is only one")
+test_equal(latest({70,50,20,30}), 30, "Latest score after personal top scores")
+test_equal(latest({20,70,15,25,30}), 30, "Latest score after personal best")
+test_summary()
+

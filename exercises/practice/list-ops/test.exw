@@ -1,0 +1,36 @@
+include list-ops.e
+
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+function add_one(integer n) return n + 1 end function
+function add_two(integer n1, n2) return n1 + n2 end function
+function multiply(integer n1, n2) return n1 * n2 end function
+function divide(integer n1, n2) return trunc(n1 / n2) end function
+
+test_equal(my_append({},{}), {}, "my_append({},{}) returns the empty sequences")
+test_equal(my_append({},{1,2,3,4}), {1,2,3,4}, "my_append({},s) returns s")
+test_equal(my_append({1,2,3,4},{}), {1,2,3,4}, "my_append(s,{}) returns s")
+test_equal(my_append({1,2},{2,3,4,5}), {1,2,2,3,4,5}, "my_append(s1,s2)) returns correct result")
+test_equal(my_concatenate({}), {}, "my_concatenate({}) yields {}")
+test_equal(my_concatenate({{1,2},{3},{},{4,5,6}}), {1,2,3,4,5,6},"my_concatenate removes top-level nesting")
+test_equal(my_concatenate({{{1},{2}},{{3}},{{}},{{4,5,6}}}), {{1},{2},{3},{},{4,5,6}},"my_concatenate removes only top-level nesting")
+test_equal(my_filter({},odd), {}, "my_filter({},any) returns {}")
+test_equal(my_filter({1,2,3,5},odd), {1,3,5}, "my_filter(s,fn) correctly filters on fn")
+test_equal(my_length({}), 0, "my_length({}) returns 0")
+test_equal(my_length({1,2,3,4}), 4, "my_length(s) returns correct result")
+test_equal(my_map({},add_one), {}, "my_map({},any) returns {}")
+test_equal(my_map({1,3,5,7},add_one), {2,4,6,8}, "my_map(s,fn) correctly applies fn")
+test_equal(my_foldl({},multiply,2), 2, "my_foldl({},any,i) returns i")
+test_equal(my_foldl({1,2,3,4},add_two,5), 15, "my_foldl(s,add_two,i) gives correct result")
+test_equal(my_foldl({2,5},divide,5), 0, "my_foldl(s,divide,i) gives correct result")
+test_equal(my_foldr({},multiply,2), 2, "my_foldr({},multiply,i) returns i")
+test_equal(my_foldr({1,2,3,4},add_two,5), 15, "my_foldr(s,add_two,i) gives correct result")
+test_equal(my_foldr({2,5},divide,5), 2, "my_foldr(s,divide,i) gives correct result")
+test_equal(my_reverse({}), {}, "my_reverse({}) yields {}")
+test_equal(my_reverse({1,3,5,7}), {7,5,3,1}, "my_reverse(s) returns correct result")
+test_equal(my_reverse({{1,2},{3},{},{4,5,6}}), {{4,5,6},{},{3},{1,2}}, "my_reverse(s) does not flatten s")
+test_summary()
+

@@ -1,0 +1,21 @@
+{
+  "authors": [
+    "petelomax",
+    "axtens",
+    "ghaberek"
+  ],
+  "files": {
+    "solution": [
+      "isogram.e"
+    ],
+    "test": [
+      "test.exw"
+    ],
+    "example": [
+      ".meta/example.e"
+    ]
+  },
+  "blurb": "Determine if a word or phrase is an isogram.",
+  "source": "Wikipedia",
+  "source_url": "https://en.wikipedia.org/wiki/Isogram"
+}

@@ -1,0 +1,147 @@
+include linked-list.e
+
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+
+// these tests were laboriuosly manually transcribed from the canonical data tests,
+// and as such several of the test descriptions might not make all that much sense.
+
+list_push(7)
+test_equal(list_pop(),7,`pop gets element from the list`)
+
+list_push(11)
+list_push(13)
+sequence p13p11 = {list_pop(),
+                   list_pop()}
+test_equal(p13p11,{13,11},`push/pop respectively add/remove at the end of the list`)
+
+list_push(17)
+test_equal(list_shift(),17,`shift gets an element from the list`)
+
+list_push(23)
+list_push(5)
+sequence s23s5 = {list_shift(),
+                  list_shift()}
+test_equal(s23s5,{23,5},`shift gets first element from the list`)
+
+list_unshift(23)
+list_unshift(5)
+sequence s5s23 = {list_shift(),
+                  list_shift()}
+test_equal(s5s23,{5,23},`unshift adds element at start of the list`)
+
+list_push(1)
+list_push(2)
+test_equal(list_pop(),2,`pop, push, shift, and unshift can be used in any order`)
+list_push(3)
+test_equal(list_shift(),1,`pop, push, shift, and unshift can be used in any order`)
+list_unshift(4)
+list_push(5)
+sequence s4p5s3 = {list_shift(),
+                   list_pop(),
+                   list_shift()}
+test_equal(s4p5s3,{4,5,3},`pop, push, shift, and unshift can be used in any order`)
+
+test_equal(list_count(),0,`count an empty list`)
+
+list_push(37)
+list_push(1)
+test_equal(list_count(),2,`count a list with items`)
+list_clear()
+
+list_push(31)
+test_equal(list_count(),1,`count is correct after mutation`)
+list_unshift(43)
+sequence c2s43c1p31c0 = {list_count(),
+                         list_shift(),
+                         list_count(),
+                         list_pop(),
+                         list_count()}
+test_equal(c2s43c1p31c0,{2,43,1,31,0},`count is correct after mutation`)
+
+list_push(41)
+list_push(59)
+sequence p59p41 = {list_pop(),
+                   list_pop()}
+test_equal(p59p41,{59,41},`popping to empty doesn't break the list`)
+list_push(47)
+sequence c1p47 = {list_count(),
+                 list_pop()}
+test_equal(c1p47,{1,47},`popping to empty doesn't break the list`)
+
+list_push(41)
+list_push(59)
+sequence s41s59 = {list_shift(),
+                   list_shift()}
+test_equal(s41s59,{41,59},`shifting to empty doesn't break the list`)
+list_push(47)
+sequence c1s47 = {list_count(),
+                  list_shift()}
+test_equal(c1s47,{1,47},`shifting to empty doesn't break the list`)
+
+list_push(61)
+list_remove(61)
+test_equal(list_count(),0,`deletes the only element`)
+
+list_push(71)
+list_push(83)
+list_push(79)
+list_remove(83)
+sequence c2p79s71 = {list_count(),
+                     list_pop(),
+                     list_shift()}
+test_equal(c2p79s71,{2,79,71},`deletes the element with the specified value from the list`)
+
+list_push(71)
+list_push(83)
+list_push(79)
+list_remove(83)
+sequence c2p79p71 = {list_count(),
+                     list_pop(),
+                     list_pop()}
+test_equal(c2p79p71,{2,79,71},`deletes the element with the specified value from the list, re-assigns tail`)
+
+list_push(71)
+list_push(83)
+list_push(79)
+list_remove(83)
+sequence c2s71s79 = {list_count(),
+                     list_shift(),
+                     list_shift()}
+test_equal(c2s71s79,{2,71,79},`deletes the element with the specified value from the list, re-assigns head`)
+
+list_push(97)
+list_push(101)
+list_remove(97)
+sequence c1p101 = {list_count(),
+                   list_pop()}
+test_equal(c1p101,{1,101},`deletes the first of two elements`)
+
+list_push(97)
+list_push(101)
+list_remove(101)
+sequence c1p97 = {list_count(),
+                  list_pop()}
+test_equal(c1p97,{1,97},`deletes the second of two elements`)
+
+list_push(89)
+list_remove(103)
+test_equal(list_count(),1,`delete does not modify the list if the element is not found`)
+list_clear()
+
+list_push(73)
+list_push(9)
+list_push(9)
+list_push(107)
+list_remove(9)
+sequence cppp = {list_count(),
+                 list_pop(),
+                 list_pop(),
+                 list_pop()}
+test_equal(cppp,{3,107,9,73},`deletes only the first occurrence`)
+
+test_summary()
+

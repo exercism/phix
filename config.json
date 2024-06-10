@@ -343,6 +343,102 @@
         "practices": [],
         "prerequisites": [],
         "difficulty": 2
+      },
+      {
+        "slug": "high-scores",
+        "name": "High Scores",
+        "uuid": "c25788bc-ba21-4b0a-85c3-627a7e247b42",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "house",
+        "name": "House",
+        "uuid": "7d364dea-124d-4d1f-8d11-83b778eadff2",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "isbn-verifier",
+        "name": "ISBN Verifier",
+        "uuid": "651cc4ee-b198-4baf-a70c-cca039342e9b",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "isogram",
+        "name": "Isogram",
+        "uuid": "9381b222-1432-4cf1-8dd0-c48020f6cac3",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "kindergarten-garden",
+        "name": "Kindergarten Garden",
+        "uuid": "1a1630d9-fab5-40c0-85ed-6f0c8abc56e0",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 6
+      },
+      {
+        "slug": "knapsack",
+        "name": "Knapsack",
+        "uuid": "8ae5abed-0e02-491b-a29c-e254e7d398b2",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 3
+      },
+      {
+        "slug": "largest-series-product",
+        "name": "Largest Series Product",
+        "uuid": "02020009-90c2-430c-bdd7-99b6b80a8bda",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 3
+      },
+      {
+        "slug": "leap",
+        "name": "Leap",
+        "uuid": "a2e0373f-3227-43ff-81ac-9fd5f13d4157",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "ledger",
+        "name": "Ledger",
+        "uuid": "ed0c53f0-efd0-45b1-a660-94e19bde9482",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 6
+      },
+      {
+        "slug": "linked-list",
+        "name": "Linked List",
+        "uuid": "1863a6ba-1e2b-4c12-8863-0ca15aeba0fe",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "list-ops",
+        "name": "List Ops",
+        "uuid": "98383499-67e0-4b55-8777-b8868514e922",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "luhn",
+        "name": "Luhn",
+        "uuid": "250b07d4-1bb5-445c-a2fb-fc958b98d155",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 8
       }
     ]
   },

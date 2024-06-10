@@ -1,0 +1,81 @@
+﻿printf(0,"",{"unicode_align",true}) -- important!!
+
+include ledger.e
+--include .meta\example.e
+
+--<do not edit>
+constant canonical_data = {
+{"USD","en_US",
+ {},
+ {`Date       | Description               | Change       `},"empty ledger"},
+{"USD","en_US",
+ {{"2015-01-01","Buy present",-1000}},
+ {`Date       | Description               | Change       `,
+  `01/01/2015 | Buy present               |      ($10.00)`},"one entry"},
+{"USD","en_US",
+ {{"2015-01-02","Get present",1000},
+  {"2015-01-01","Buy present",-1000}},
+ {`Date       | Description               | Change       `,
+  `01/01/2015 | Buy present               |      ($10.00)`,
+  `01/02/2015 | Get present               |       $10.00 `},"credit and debit"},
+{"USD","en_US",
+ {{"2015-01-01","Something",0},
+  {"2015-01-01","Something",-1},
+  {"2015-01-01","Something",1}},
+ {`Date       | Description               | Change       `,
+  `01/01/2015 | Something                 |       ($0.01)`,
+  `01/01/2015 | Something                 |        $0.00 `,
+  `01/01/2015 | Something                 |        $0.01 `},"final order tie breaker is change"},
+{"USD","en_US",
+ {{"2015-01-01","Freude schoner Gotterfunken",-123456}},
+ {`Date       | Description               | Change       `,
+  `01/01/2015 | Freude schoner Gotterf... |   ($1,234.56)`},"overlong description is truncated"},
+{"EUR","en_US",
+ {{"2015-01-01","Buy present",-1000}},
+ {`Date       | Description               | Change       `,
+  `01/01/2015 | Buy present               |      (€10.00)`},"euros"},
+{"USD","nl_NL",
+ {{"2015-03-12","Buy present",123456}},
+ {`Datum      | Omschrijving              | Verandering  `,
+  `12-03-2015 | Buy present               |   $ 1.234,56 `},"Dutch locale"},
+{"EUR","nl_NL",
+ {{"2015-03-12","Buy present",123456}},
+ {`Datum      | Omschrijving              | Verandering  `,
+  `12-03-2015 | Buy present               |   € 1.234,56 `},"Dutch locale and euros"},
+{"USD","nl_NL",
+ {{"2015-03-12","Buy present",-12345}},
+ {`Datum      | Omschrijving              | Verandering  `,
+  `12-03-2015 | Buy present               |    $ -123,45 `},"Dutch negative number with 3 digits before decimal point"},
+{"USD","en_US",
+ {{"2015-03-12","Buy present",-12345}},
+ {`Date       | Description               | Change       `,
+  `03/12/2015 | Buy present               |     ($123.45)`},"American negative number with 3 digits before decimal point"},
+{"USD","en_US",
+ {{"2015-01-01","Get present",1000},
+  {"2015-01-01","Buy present",-1000}},
+ {`Date       | Description               | Change       `,
+  `01/01/2015 | Buy present               |      ($10.00)`,
+  `01/01/2015 | Get present               |       $10.00 `},"multiple entries on same date ordered by description"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    sequence {curr,locale,entries,expected,desc} = t,
+             res = format_ledger(curr,locale,entries)
+    if res=expected then
+        test_equal(res,expected,desc)
+    else
+        integer lr = length(res),
+                le = length(expected)
+        test_equal(lr,le,"expected length matches")
+        for i=1 to min(lr,le) do
+--          test_equal(length(res[i]),length(expected[i]),"%s: line %d length",{desc,i})
+            test_equal(res[i],expected[i],"%s: line %d matches",{desc,i})
+        end for
+    end if
+end for
+test_summary()
+
+--wait_key()
+
