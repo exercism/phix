@@ -49,9 +49,9 @@ procedure process()
 
     printf(1, "%s: testing...", {slug})
     assert(copy_file(meta_src,temp_src,true),"cannot copy "&meta_src&" to "&temp_src)
-printf(1, "copied %s to %\n", {meta_src,temp_src})
+printf(1, "copied %s to %s\n", {meta_src,temp_src})
     assert(copy_file(test_src,tmp_dir,true),"cannot copy "&test_src&" to "&tmp_dir)
-printf(1, "copied %s to %\n", {test_src,tmp_dir})
+printf(1, "copied %s to %s\n", {test_src,tmp_dir})
 
     if file_exists(lib_dir) then
         assert(copy_directory(lib_dir,temp_lib,true),"cannot copy "&lib_dir&" to "&temp_lib)
