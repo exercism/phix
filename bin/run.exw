@@ -49,7 +49,14 @@ procedure process()
 --  end if
 --  if not bOK then
 --      crash(sol_dir&" does not exist or is is not a directory")
-        crash("%s does not exist or is is not a directory (%d)",{sol_dir,ftsd})
+        string ftsds = {"UNDEFINED","NOT_FOUND","FILE","DIRECTORY"}[ftsd+2]
+--/*
+FILETYPE_UNDEFINED (-1) if file could be multiply defined
+FILETYPE_NOT_FOUND (0) if filename does not exist
+FILETYPE_FILE (1) if filename is a file
+FILETYPE_DIRECTORY (2) if filename 
+--*/
+        crash("%s does not exist or is is not a directory (%d aka FILETYPE_%s)",{sol_dir,ftsd,ftsds})
 else
  printf(1,"directory >%s< is fine...\n",{sol_dir})
     end if
