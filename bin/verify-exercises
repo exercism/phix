@@ -39,6 +39,6 @@ for practice_exercise_dir in ./exercises/practice/${slug}/; do
         echo "Checking ${practice_exercise_dir} exercise..."
         # TODO: run command to verify that the example solution passes the tests
 #       p bin/run.exw $(basename "${practice_exercise_dir}") ${practice_exercise_dir} /tmp
-        p bin/run.exw ${practice_exercise_dir}
+        p bin/run.exw ../${practice_exercise_dir}
     fi
 done
