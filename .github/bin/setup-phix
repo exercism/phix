@@ -19,6 +19,6 @@ chmod 777 p
 cd ..
 sudo mv phix /usr/local
 cd /usr/local/phix
-sudo find /usr/local/phix -type f -executable -exec ln -s {} \; 
+sudo find /usr/local/phix -type f -executable -exec ln -s -f {} \; 
 
 p -version
