@@ -1,0 +1,31 @@
+include say.e
+
+--<do not edit>
+constant canonical_data = {
+{0,"zero","zero"},
+{1,"one","one"},
+{14,"fourteen","fourteen"},
+{20,"twenty","twenty"},
+{22,"twenty-two","twenty-two"},
+{30,"thirty","thirty"},
+{99,"ninety-nine","ninety-nine"},
+{100,"one hundred","one hundred"},
+{123,"one hundred twenty-three","one hundred twenty-three"},
+{200,"two hundred","two hundred"},
+{999,"nine hundred ninety-nine","nine hundred ninety-nine"},
+{1000,"one thousand","one thousand"},
+{1234,"one thousand two hundred thirty-four","one thousand two hundred thirty-four"},
+{1000000,"one million","one million"},
+{1002345,"one million two thousand three hundred forty-five","one million two thousand three hundred forty-five"},
+{1000000000,"one billion","one billion"},
+{987654321123,"nine hundred eighty-seven billion six hundred fifty-four million three hundred twenty-one thousand one hundred twenty-three","a big number"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    {atom n, string expected, string desc} = t
+    test_equal(say(n),expected,desc)
+end for
+test_summary()
+

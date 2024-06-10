@@ -711,6 +711,126 @@
         "practices": [],
         "prerequisites": [],
         "difficulty": 4
+      },
+      {
+        "slug": "saddle-points",
+        "name": "Saddle Points",
+        "uuid": "164eb023-6ebc-4a3c-b82a-3f53bd65f174",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "say",
+        "name": "Say",
+        "uuid": "60c160a4-dfee-4e91-9d6a-f659c356ecca",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 3
+      },
+      {
+        "slug": "scrabble-score",
+        "name": "Scrabble Score",
+        "uuid": "a527d034-e9b3-4955-bd19-3a222212841b",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "secret-handshake",
+        "name": "Secret Handshake",
+        "uuid": "7f7063ee-6108-4b6c-91a5-574b323faede",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "series",
+        "name": "Series",
+        "uuid": "79dd69e2-99a3-4274-9a4c-2466686773e3",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 3
+      },
+      {
+        "slug": "sieve",
+        "name": "Sieve",
+        "uuid": "a2473f3a-7185-4c4c-ac8f-a4d74fbf0376",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "simple-cipher",
+        "name": "Simple Cipher",
+        "uuid": "a70b5788-b5dc-4901-bc37-1634fc0c0706",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 4
+      },
+      {
+        "slug": "simple-linked-list",
+        "name": "Simple Linked List",
+        "uuid": "3aa9eeb1-d666-49ca-bccc-0c6a1627c42d",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "space-age",
+        "name": "Space Age",
+        "uuid": "ad682c69-1152-4766-b20d-0988fcc36b54",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "spiral-matrix",
+        "name": "Spiral Matrix",
+        "uuid": "0426c933-1a6a-4396-a070-dcce009180b3",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 4
+      },
+      {
+        "slug": "square-root",
+        "name": "Square Root",
+        "uuid": "65e0c5fa-c175-4591-9d6b-4788fe55770b",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "state-of-tic-tac-toe",
+        "name": "State of Tic-Tac-Toe",
+        "uuid": "648aab54-95b2-4f30-9271-f27ec4a5f9e2",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 4
+      },
+      {
+        "slug": "strain",
+        "name": "Strain",
+        "uuid": "e821f485-2ecb-467f-9c7a-b8941b616344",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "sublist",
+        "name": "Sublist",
+        "uuid": "89bf5640-b470-4772-85c7-a6280ebcfcad",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 3
+      },
+      {
+        "slug": "sum-of-multiples",
+        "name": "Sum of Multiples",
+        "uuid": "7f6e01ee-372b-4335-9b0f-b1b8fdabc263",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
       }
     ]
   },

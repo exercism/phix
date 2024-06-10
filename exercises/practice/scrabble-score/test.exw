@@ -1,0 +1,25 @@
+include scrabble-score.e
+
+--<do not edit>
+constant canonical_data = {
+{"a",1,"lowercase letter"},
+{"A",1,"uppercase letter"},
+{"f",4,"valuable letter"},
+{"at",2,"short word"},
+{"zoo",12,"short, valuable word"},
+{"street",6,"medium word"},
+{"quirky",22,"medium, valuable word"},
+{"OxyphenButazone",41,"long, mixed-case word"},
+{"pinata",8,"english-like word"},
+{"",0,"empty input"},
+{"abcdefghijklmnopqrstuvwxyz",87,"entire alphabet available"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    {string word, integer expect, string desc} = t
+    test_equal(score(word),expect,desc)
+end for
+test_summary()
+

@@ -1,0 +1,25 @@
+include secret-handshake.e
+
+--<do not edit>
+constant canonical_data = {
+{1,{"wink"},"wink for 1"},
+{2,{"double blink"},"double blink for 10"},
+{4,{"close your eyes"},"close your eyes for 100"},
+{8,{"jump"},"jump for 1000"},
+{3,{"wink","double blink"},"combine two actions"},
+{19,{"double blink","wink"},"reverse two actions"},
+{24,{"jump"},"reversing one action gives the same action"},
+{16,{},"reversing no actions still gives no actions"},
+{15,{"wink","double blink","close your eyes","jump"},"all possible actions"},
+{31,{"jump","close your eyes","double blink","wink"},"reverse all possible actions"},
+{0,{},"do nothing for zero"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    {integer code, sequence expected, string desc} = t
+    test_equal(commands(code),expected,desc)
+end for
+test_summary()
+

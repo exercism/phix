@@ -1,0 +1,130 @@
+include simple-cipher.e
+
+-- (symbolic stuff a bit too messy, besides there's way more tests below now!)
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+
+-- text, caesar-encoded, NSA-encoded, decoded, vigenere-key, vigenere_encoded:
+--    (note this constant does not contain any preserved-encoded values)
+constant tests = {
+        {"aaaaaaaaaa", "dddddddddd",
+                       "xxxxxxxxxx",
+                       "aaaaaaaaaa",
+          "abcdefghij","abcdefghij"},
+        {"zzzzzzzzzz", "cccccccccc",
+                       "wwwwwwwwww",
+                       "zzzzzzzzzz",
+          "abcdefghij","zabcdefghi"},
+        {"iamapandabear", "ldpdsdqgdehdu", 
+                          "fxjxmxkaxybxo", 
+                          "iamapandabear",
+         "iamapandabear", "qayaeaagaciai"},
+        {`iamapandabear`, `ldpdsdqgdehdu`,
+                          `fxjxmxkaxybxo`,
+                          `iamapandabear`,
+                   `abc`, `iboaqcnecbfcr`},
+        {"I am a panda bear.", "ldpdsdqgdehdu",
+                               "fxjxmxkaxybxo",
+                               "iamapandabear",
+              "iamapandabear", "qayaeaagaciai"},
+        {"programmingisawesome", "surjudpplqjlvdzhvrph", 
+                                 "moldoxjjfkdfpxtbpljb",
+                                 "programmingisawesome",
+                          "abc", "psqgscmnknhksbyetqmf"},
+        {"Programming is AWESOME!", "surjudpplqjlvdzhvrph",
+                                    "moldoxjjfkdfpxtbpljb",
+                                    "programmingisawesome",
+                             "abc", "psqgscmnknhksbyetqmf"},
+        {"todayisholiday", "wrgdblvkrolgdb",
+                           "qlaxvfpelifaxv",
+                           "todayisholiday",
+                    "abc", "tpfazksiqljfaz"},
+        {"today is holiday", "wrgdblvkrolgdb",
+                             "qlaxvfpelifaxv",
+                             "todayisholiday",
+                      "abc", "tpfazksiqljfaz"},
+        {"venividivici", "yhqlylglylfl",
+                         "sbkfsfafsfzf",
+                         "venividivici",
+                  "abc", "vfpiwkdjxidk"},
+        {"Go, go, gophers", "jrjrjrskhuv",
+                            "dldldlmebop",
+                            "gogogophers",
+                     "abc", "gpiohqpigrt"},
+        {"Twas the night before Christmas", "wzdvwkhqljkwehiruhfkulvwpdv", 
+                                            "qtxpqebkfdeqybclobzeofpqjxp",
+                                            "twasthenightbeforechristmas",
+                                     "abc", "txcsujeokgivbfhosgcititvmbu"},
+        {" -- @#!", "", "", "", "abc", ""},
+        {"", "", "", "", "abc", ""},
+        {"THE ENEMY IS NEAR", "wkhhqhpblvqhdu",
+                              "qebbkbjvfpkbxo",
+                              "theenemyisnear",
+                       "abc", "tigeogmzksogas"},
+        {"SPIES SEND SECRET MESSAGES","vslhvvhqgvhfuhwphvvdjhv",
+                                      "pmfbppbkapbzobqjbppxdbp",
+                                      "spiessendsecretmessages",
+                               "abc", "sqketueofsferfvmfusbiet"},
+        {"THOMAS JEFFERSON DESIGNED A SUBSTITUTION CIPHER",
+                            "wkrpdvmhiihuvrqghvljqhgdvxevwlwxwlrqflskhu",
+                            "qeljxpgbccboplkabpfdkbaxprypqfqrqflkzfmebo",
+                            "thomasjeffersondesignedasubstitutioncipher",
+                     "abc", "tiqmbujfhfftsppdfuihpeecsvdsuktvvippcjrhft"},
+        {"the quick brown fox jumps over the lazy dog",
+                                   "wkhtxlfneurzqiramxpsvryhuwkhodcbgrj",
+                                   "qebnrfzhyoltkclugrjmplsboqebixwvald",
+                                   "thequickbrownfoxjumpsoverthelazydog",
+                            "abc", "tigqvkcldrpyngqxkwmquowgrujemczzfoh"},
+        {"ATTACKATDAWN", "dwwdfndwgdzq", 
+                         "xqqxzhxqaxtk", 
+                         "attackatdawn",
+                "lemon", "lxfopvefrnhr"},
+        {"Diffie Hellman", "gliilhkhoopdq",
+                           "afccfbebiijxk",
+                           "diffiehellman",
+         "duxrceqyaimciuucnelkeoxjhdyduu",
+                           "gccwkixcltycv"},
+        {"cof-FEE, 123!", "friihh",
+                          "zlccbb",
+                          "coffee",
+                "qgbvno", "sugars"},
+}
+
+set_test_verbosity(TEST_SHOW_ALL)
+
+string rk = random_key()
+test_true(length(rk)>=100 and filter(rk,"out","az","[]")="","valid random key (%s)",{shorten(rk)})
+
+for i,t in tests from 1 do
+    string {text, encoded, NSA_encoded, decoded, key, v_encoded} = t
+    -- caesar tests
+    test_equal(caesar_encode(text,3),encoded,"caesar-encode(%d)",{i})
+    test_equal(caesar_decode(encoded,3),decoded,"caesar-decode(%d)",{i})
+    -- nsa tests
+    test_equal(caesar_encode(text,26-3),NSA_encoded,"nsa-encode(%d)",{i})
+    test_equal(caesar_decode(NSA_encoded,26-3),decoded,"nsa-decode(%d)",{i})
+    -- vigenere tests
+    test_equal(vigenere_encode(text,key),v_encoded,"vigenere-encode(%d)",{i})
+    test_equal(vigenere_decode(v_encoded,key),decoded,"vigenere-decode(%d)",{i})
+    string vrk = vigenere_encode(text,rk),
+           dvrk = vigenere_decode(vrk,rk)
+    test_equal(dvrk,decoded,"vigenere-rand-decode(%d)",{i})
+    if text!=decoded then
+        string et = caesar_encode(text,3,true),
+               dt = caesar_decode(et,3,true),
+               en = caesar_encode(text,26-3,true),
+               dn = caesar_decode(en,26-3,true),
+               ev = vigenere_encode(text,key,true),
+               dv = vigenere_decode(ev,key,true),
+               er = vigenere_encode(text,rk,true),
+               dr = vigenere_decode(er,rk,true)
+        test_equal(dt,text,"caesar-decode-preserved(%d)",{i})
+        test_equal(dn,text,"nsa-decode-preserved(%d)",{i})
+        test_equal(dv,text,"vigenere-decode-preserved(%d)",{i})
+        test_equal(dr,text,"vigenere-rand-decode-preserved(%d)",{i})
+    end if
+end for
+
+test_summary()
+

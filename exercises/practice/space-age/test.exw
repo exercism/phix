@@ -1,0 +1,24 @@
+include space-age.e 
+
+--<do not edit>
+constant canonical_data = {
+{"Earth",1000000000,31.69,"age on Earth"},
+{"Mercury",2134835688,280.88,"age on Mercury"},
+{"Venus",189839836,9.78,"age on Venus"},
+{"Mars",2129871239,35.88,"age on Mars"},
+{"Jupiter",901876382,2.41,"age on Jupiter"},
+{"Saturn",2000000000,2.15,"age on Saturn"},
+{"Uranus",1210123456,0.46,"age on Uranus"},
+{"Neptune",1821023456,0.35,"age on Neptune"},
+{"Sun",680804807,0,"invalid planet causes error"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    {string planet, atom seconds, atom expect, string desc} = t
+    test_equal(age_on(planet, seconds), expect, desc, "%.2f")
+end for
+test_summary() 
+
+

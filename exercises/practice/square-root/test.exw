@@ -1,0 +1,20 @@
+include square-root.e
+
+--<do not edit>
+constant canonical_data = {
+{1,1,"root of 1"},
+{4,2,"root of 4"},
+{25,5,"root of 25"},
+{81,9,"root of 81"},
+{196,14,"root of 196"},
+{65025,255,"root of 65025"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    {integer radicand, integer expected, string desc} = t
+    test_equal(square_root(radicand), expected, desc)
+end for
+test_summary()
+
