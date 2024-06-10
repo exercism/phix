@@ -76,7 +76,7 @@ FILETYPE_DIRECTORY (2) if filename
     assert(copy_file(meta_src,temp_src,true),"cannot copy "&meta_src&" to "&temp_src)
 printf(1, "copied %s to %s\n", {meta_src,temp_src})
 --  assert(copy_file(test_src,tmp_dir,true),"cannot copy "&test_src&" to "&tmp_dir)
-    assert(copy_file(test_src,tmp_dir,true),"cannot copy "&test_src&" to "&tmp_file)
+    assert(copy_file(test_src,tmp_file,true),"cannot copy "&test_src&" to "&tmp_file)
 --printf(1, "copied %s to %s\n", {test_src,tmp_dir})
 printf(1, "copied %s to %s\n", {test_src,tmp_file})
 
