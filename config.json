@@ -519,6 +519,86 @@
         "practices": [],
         "prerequisites": [],
         "difficulty": 2
+      },
+      {
+        "slug": "pascals-triangle",
+        "name": "Pascal's Triangle",
+        "uuid": "a2e4bac3-7bc8-4b4e-9381-b2e6fb43c4bc",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 4
+      },
+      {
+        "slug": "perfect-numbers",
+        "name": "Perfect Numbers",
+        "uuid": "7f5023d1-03a3-4fbc-8ab6-27b795c6856a",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "phone-number",
+        "name": "Phone Number",
+        "uuid": "b33fe295-3e0b-4504-a79f-a3d79548dd2c",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 4
+      },
+      {
+        "slug": "pig-latin",
+        "name": "Pig Latin",
+        "uuid": "270f7cd7-e92d-4ea3-af00-cdd844383705",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 4
+      },
+      {
+        "slug": "poker",
+        "name": "Poker",
+        "uuid": "f7dddeea-04f4-4fdc-a820-8e9db9c1218e",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 4
+      },
+      {
+        "slug": "pov",
+        "name": "POV",
+        "uuid": "c3d8f89d-38d4-4136-84dd-9faf4ab3f472",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 9
+      },
+      {
+        "slug": "prime-factors",
+        "name": "Prime Factors",
+        "uuid": "e8539458-2f87-406c-b6c5-b8eb848436d8",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 3
+      },
+      {
+        "slug": "protein-translation",
+        "name": "Protein Translation",
+        "uuid": "06ace46c-fe7e-482a-ba3b-412db2d90e37",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "proverb",
+        "name": "Proverb",
+        "uuid": "f9cb3d25-9c10-4b8e-a84d-fd23e93f9aa7",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "pythagorean-triplet",
+        "name": "Pythagorean Triplet",
+        "uuid": "bfb9b7fd-4acd-4d32-80d5-f5854e7c6478",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
       }
     ]
   },

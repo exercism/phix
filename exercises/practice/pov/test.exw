@@ -1,0 +1,93 @@
+without javascript_semantics
+include pov.e
+
+--<do not edit>
+constant canonical_data = {
+{
+{{"x",{}},"x",
+ {"x",{}},"Results in the same tree if the input tree is a singleton"},
+{{"parent",{{"sibling",{}},{"x",{}}}},"x",
+ {"x",{{"parent",{{"sibling",{}}}}}},"Can reroot a tree with a parent and one sibling"},
+{{"parent",{{"a",{}},{"b",{}},{"c",{}},{"x",{}}}},"x",
+ {"x",{{"parent",{{"a",{}},{"b",{}},{"c",{}}}}}},"Can reroot a tree with a parent and many siblings"},
+{{"level-0",{{"level-1",{{"level-2",{{"level-3",{{"x",{}}}}}}}}}},"x",
+ {"x",{{"level-3",{{"level-2",{{"level-1",{{"level-0",{}}}}}}}}}},"Can reroot a tree with new root deeply nested in tree"},
+{{"parent",{{"x",{{"kid-0",{}},{"kid-1",{}}}}}},"x",
+ {"x",{{"kid-0",{}},{"kid-1",{}},{"parent",{}}}},"Moves children of the new root to same level as former parent"},
+{{"grandparent",{{"parent",{{"sibling-0",{}},{"sibling-1",{}},{"x",{{"kid-0",{}},{"kid-1",{}}}}}},{"uncle",{{"cousin-0",{}},{"cousin-1",{}}}}}},"x",
+ {"x",{{"kid-0",{}},{"kid-1",{}},{"parent",{{"grandparent",{{"uncle",{{"cousin-0",{}},{"cousin-1",{}}}}}},{"sibling-0",{}},{"sibling-1",{}}}}}},"Can reroot a complex tree with cousins"},
+{{"x",{}},"nonexistent",
+ 0,"Errors if target does not exist in a singleton tree"},
+{{"parent",{{"sibling-0",{}},{"sibling-1",{}},{"x",{{"kid-0",{}},{"kid-1",{}}}}}},"nonexistent",
+ 0,"Errors if target does not exist in a large tree"},
+},
+{
+{"x","parent",{"parent",{{"sibling",{}},{"x",{}}}},
+ {"x","parent"},"Can find path to parent"},
+{"x","b",{"parent",{{"a",{}},{"b",{}},{"c",{}},{"x",{}}}},
+ {"x","parent","b"},"Can find path to sibling"},
+{"x","cousin-1",{"grandparent",{{"parent",{{"sibling-0",{}},{"sibling-1",{}},{"x",{{"kid-0",{}},{"kid-1",{}}}}}},{"uncle",{{"cousin-0",{}},{"cousin-1",{}}}}}},
+ {"x","parent","grandparent","uncle","cousin-1"},"Can find path to cousin"},
+{"x","sibling-1",{"grandparent",{{"parent",{{"sibling-0",{}},{"sibling-1",{}},{"x",{}}}}}},
+ {"x","parent","sibling-1"},"Can find path not involving root"},
+{"a","c",{"parent",{{"a",{}},{"b",{}},{"c",{}},{"x",{}}}},
+ {"a","parent","c"},"Can find path from nodes other than x"},
+{"x","nonexistent",{"parent",{{"sibling-0",{}},{"sibling-1",{}},{"x",{{"kid-0",{}},{"kid-1",{}}}}}},
+ 0,"Errors if destination does not exist"},
+{"nonexistent","x",{"parent",{{"sibling-0",{}},{"sibling-1",{}},{"x",{{"kid-0",{}},{"kid-1",{}}}}}},
+ 0,"Errors if source does not exist"},
+},
+}
+--</do not edit>
+
+sequence fails = {}
+function nested_equal(object tree, sequence expect)
+    if tree=null then return false end if
+    if tree=expect then return true end if
+    if tree[LABEL]!=expect[LABEL]
+    or length(tree[CHILDREN])!=length(expect[CHILDREN]) then
+        fails = append(fails,{tree,expect})
+        return false
+    end if
+    sequence tc = sort(deep_copy(tree[CHILDREN]))
+    bool ok = true
+    for i,c in tc do
+        if not nested_equal(c,expect[CHILDREN][i]) then
+            ok = false
+        end if
+    end for
+    return ok
+end function
+
+function pt(object t)
+    -- generate "\nhelpful strings"
+    return "\n"&ppf(t,{pp_Nest,1})
+end function
+
+set_test_verbosity(TEST_SHOW_ALL)
+sequence tree
+string nfrom, nto, desc
+object expect
+for t in canonical_data[1] do
+    {tree, nfrom, expect, desc} = t
+    object acttree = from_pov(tree, nfrom)
+    -- aside: equal() shows solidarity with nested_equal(),
+    --        but it's actually no different to a '='/'=='.
+    bool ok = equal(acttree,expect) or
+       nested_equal(acttree,expect)       
+    if not ok then
+        test_equal(pt(acttree),pt(expect),desc)
+        for f in fails do
+            test_equal(pt(f[1]),pt(f[2]),"(sub-nodes of above)")
+        end for
+        fails = {}
+    else
+        test_pass(desc)
+    end if
+end for
+for t in canonical_data[2] do
+    {nfrom, nto, tree, expect, desc} = t
+    test_equal(path_to(nfrom, nto, tree), expect, desc)
+end for
+test_summary()
+

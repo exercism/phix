@@ -1,0 +1,18 @@
+{
+  "authors": [
+    "petelomax"
+  ],
+  "files": {
+    "solution": [
+      "protein-translation.e"
+    ],
+    "test": [
+      "test.exw"
+    ],
+    "example": [
+      ".meta/example.e"
+    ]
+  },
+  "blurb": "Translate RNA sequences into proteins.",
+  "source": "Tyler Long"
+}

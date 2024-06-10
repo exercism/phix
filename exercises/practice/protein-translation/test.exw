@@ -1,0 +1,46 @@
+
+include protein-translation.e
+
+--<do not edit>
+constant canonical_data = {
+{"",{},"Empty RNA sequence results in no proteins"},
+{"AUG",{"Methionine"},"Methionine RNA sequence"},
+{"UUU",{"Phenylalanine"},"Phenylalanine RNA sequence 1"},
+{"UUC",{"Phenylalanine"},"Phenylalanine RNA sequence 2"},
+{"UUA",{"Leucine"},"Leucine RNA sequence 1"},
+{"UUG",{"Leucine"},"Leucine RNA sequence 2"},
+{"UCU",{"Serine"},"Serine RNA sequence 1"},
+{"UCC",{"Serine"},"Serine RNA sequence 2"},
+{"UCA",{"Serine"},"Serine RNA sequence 3"},
+{"UCG",{"Serine"},"Serine RNA sequence 4"},
+{"UAU",{"Tyrosine"},"Tyrosine RNA sequence 1"},
+{"UAC",{"Tyrosine"},"Tyrosine RNA sequence 2"},
+{"UGU",{"Cysteine"},"Cysteine RNA sequence 1"},
+{"UGC",{"Cysteine"},"Cysteine RNA sequence 2"},
+{"UGG",{"Tryptophan"},"Tryptophan RNA sequence"},
+{"UAA",{},"STOP codon RNA sequence 1"},
+{"UAG",{},"STOP codon RNA sequence 2"},
+{"UGA",{},"STOP codon RNA sequence 3"},
+{"UUUUUU",{"Phenylalanine","Phenylalanine"},"Sequence of two protein codons translates into proteins"},
+{"UUAUUG",{"Leucine","Leucine"},"Sequence of two different protein codons translates into proteins"},
+{"AUGUUUUGG",{"Methionine","Phenylalanine","Tryptophan"},"Translate RNA strand into correct protein list"},
+{"UAGUGG",{},"Translation stops if STOP codon at beginning of sequence"},
+{"UGGUAG",{"Tryptophan"},"Translation stops if STOP codon at end of two-codon sequence"},
+{"AUGUUUUAA",{"Methionine","Phenylalanine"},"Translation stops if STOP codon at end of three-codon sequence"},
+{"UGGUAGUGG",{"Tryptophan"},"Translation stops if STOP codon in middle of three-codon sequence"},
+{"UGGUGUUAUUAAUGGUUU",{"Tryptophan","Cysteine","Tyrosine"},"Translation stops if STOP codon in middle of six-codon sequence"},
+{"XYZ","Invalid codon",`Unknown amino acids, not part of a codon, can't translate`},
+{"AUGU","Invalid codon",`Incomplete RNA sequence can't translate`},
+{"UUCUUCUAAUGGU",{"Phenylalanine","Phenylalanine"},"Incomplete RNA sequence can translate if valid until a STOP codon"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+
+for t in canonical_data do
+    sequence {input, output, desc} = t
+    test_equal(proteins(input), output, desc)
+end for
+
+test_summary()
+

@@ -1,0 +1,37 @@
+include phone-number.e
+
+--<do not edit>
+constant canonical_data = {
+{"(223) 456-7890","2234567890","cleans the number"},
+{"223.456.7890","2234567890","cleans numbers with dots"},
+{"223 456   7890   ","2234567890","cleans numbers with multiple spaces"},
+{"123456789","must not be fewer than 10 digits","invalid when 9 digits"},
+{"22234567890","11 digits must start with 1","invalid when 11 digits does not start with a 1"},
+{"12234567890","2234567890","valid when 11 digits and starting with 1"},
+{"+1 (223) 456-7890","2234567890","valid when 11 digits and starting with 1 even with punctuation"},
+{"321234567890","must not be greater than 11 digits","invalid when more than 11 digits"},
+{"523-abc-7890","letters not permitted","invalid with letters"},
+{"523-@:!-7890","punctuations not permitted","invalid with punctuations"},
+{"(023) 456-7890","area code cannot start with zero","invalid if area code starts with 0"},
+{"(123) 456-7890","area code cannot start with one","invalid if area code starts with 1"},
+{"(223) 056-7890","exchange code cannot start with zero","invalid if exchange code starts with 0"},
+{"(223) 156-7890","exchange code cannot start with one","invalid if exchange code starts with 1"},
+{"1 (023) 456-7890","area code cannot start with zero","invalid if area code starts with 0 on valid 11-digit number"},
+{"1 (123) 456-7890","area code cannot start with one","invalid if area code starts with 1 on valid 11-digit number"},
+{"1 (223) 056-7890","exchange code cannot start with zero","invalid if exchange code starts with 0 on valid 11-digit number"},
+{"1 (223) 156-7890","exchange code cannot start with one","invalid if exchange code starts with 1 on valid 11-digit number"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+for t in canonical_data do
+    string {input,expected,desc} = t,
+           res = phone(input)   
+    if res!=expected and res="error" 
+    and (match("not",expected) or match("must",expected)) then
+        res = expected
+    end if
+    test_equal(res,expected,desc)
+end for
+test_summary()
+
