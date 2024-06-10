@@ -29,14 +29,15 @@ procedure process()
            res_file = join_path({out_dir, "results.json"})
 
 --10/6/24
-    bool bOK = get_file_type(sol_dir)==FILETYPE_DIRECTORY
-//  if not bOK and match(`/phix/bin/`,sol_dir) then
-    if not bOK and match(`/bin/`,sol_dir) then
---      sol_dir = substitute(sol_dir,`/phix/bin/`,'/')
-        sol_dir = substitute(sol_dir,`/bin/`,'/')
-        bOK = get_file_type(sol_dir)==FILETYPE_DIRECTORY
-    end if
-    if not bOK then
+    if get_file_type(sol_dir)!=FILETYPE_DIRECTORY then
+--  bool bOK = get_file_type(sol_dir)==FILETYPE_DIRECTORY
+--//    if not bOK and match(`/phix/bin/`,sol_dir) then
+--  if not bOK and match(`/bin/`,sol_dir) then
+----        sol_dir = substitute(sol_dir,`/phix/bin/`,'/')
+--      sol_dir = substitute(sol_dir,`/bin/`,'/')
+--      bOK = get_file_type(sol_dir)==FILETYPE_DIRECTORY
+--  end if
+--  if not bOK then
         crash(sol_dir&" does not exist or is is not a directory")
     end if
     if not file_exists(out_dir) then
@@ -68,8 +69,8 @@ procedure process()
     sequence lines = get_text(out_file,GT_LF_STRIPPED)
     
     -- Quick cleanup (entirely optional)
-    assert(delete_file(out_file),"cannot delete "&out_file)
-    assert(remove_directory(tmp_dir,true),"cannot delete "&tmp_dir)
+--  assert(delete_file(out_file),"cannot delete "&out_file)
+--  assert(remove_directory(tmp_dir,true),"cannot delete "&tmp_dir)
 
     string status = "pass", message = ""
 
