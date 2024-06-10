@@ -1,0 +1,13 @@
+include zebra-puzzle.e
+
+--<do not edit>
+constant canonical_data = {
+{"drinksWater","Norwegian","resident who drinks water"},
+{"ownsZebra","Japanese","resident who owns zebra"},
+}
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+test_equal(find_solution(),vslice(canonical_data,2),"nationalities of who drinks water and who owns zebra")
+test_summary()
+

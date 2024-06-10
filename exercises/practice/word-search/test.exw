@@ -1,0 +1,85 @@
+include word-search.e
+
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+
+function eri(sequence o, e, r) return reinstate(o,r,extract(o,e)) end function
+
+constant tenlinegrid = {"jefblpepre",
+                        "camdcimgtc",
+                        "oivokprjsm",
+                        "pbwasqroua",
+                        "rixilelhrs",
+                        "wolcqlirpc",
+                        "screeaumgr",
+                        "alxhpburyi",
+                        "jalaycalmp",
+                        "clojurermt"},
+         tenlinegrid2 = eri(tenlinegrid,{9,10},{10,9}),
+         tenlinegrid3 = reinstate(tenlinegrid,7,"fortranftw"),
+         tenlinegrid4 = eri(tenlinegrid3,{9,10},{10,9}),
+         langs = {"clojure", "elixir", "ecmascript", "rust", 
+                  "java", "lua", "lisp", "ruby", "haskell"}
+
+constant tests = {
+{"Should accept an initial game grid and a target search word",
+extract(tenlinegrid,{1}), {"clojure"}, {1,{{{0,0},{0,0}}}}},
+{"Should locate one word written left to right",
+extract(tenlinegrid,{10}), {"clojure"},{0,{{{1,1},{7,1}}}}},
+{"Should locate the same word written left to right in a different position",
+{"mtclojurer"}, {"clojure"},{0,{{{3,1},{9,1}}}}},
+{"Should locate a different left to right word",
+{"coffeelplx"}, {"coffee"},{0,{{{1,1},{6,1}}}}},
+{"Should locate that different left to right word in a different position",
+{"xcoffeezlp"}, {"coffee"},{0,{{{2,1},{7,1}}}}},
+{"Should locate a left to right word in two line grid",
+{tenlinegrid[1],"tclojurerm"}, {"clojure"},{0,{{{2,2},{8,2}}}}},
+{"Should locate a left to right word in three line grid",
+extract(tenlinegrid,{2,1,10}), {"clojure"},{0,{{{1,3},{7,3}}}}},
+{"Should locate a left to right word in ten line grid",
+tenlinegrid, {"clojure"},{0,{{{1,10},{7,10}}}}},
+{"Should locate that left to right word in a different position in a ten line grid",
+tenlinegrid2, {"clojure"},{0,{{{1,9},{7,9}}}}},
+{"Should locate a different left to right word in a ten line grid",
+tenlinegrid4, {"fortran"},{0,{{{1,7},{7,7}}}}},
+{"Should locate multiple words",
+tenlinegrid3, {"fortran", "clojure"},{0,{{{1,7},{7,7}},{{1,10},{7,10}}}}},
+{"Should locate a single word written right to left",
+extract(tenlinegrid,{5}), {"elixir"},{0,{{{6,1},{1,1}}}}},
+{"Should locate multiple words written in different horizontal directions",
+tenlinegrid, langs[1..2],{0,{{{1,10},{7,10}},{{6,5},{1,5}}}}},
+{"Should locate words written top to bottom",
+tenlinegrid, langs[1..3],{0,{{{1,10},{7,10}},{{6,5},{1,5}},{{10,1},{10,10}}}}},
+{"Should locate words written bottom to top",
+tenlinegrid, langs[1..4],{0,{{{1,10},{7,10}},{{6,5},{1,5}},{{10,1},{10,10}},{{9,5},{9,2}}}}},
+{"Should locate words written top left to bottom right",
+tenlinegrid, langs[1..5],{0,{{{1,10},{7,10}},{{6,5},{1,5}},{{10,1},{10,10}},{{9,5},{9,2}},{{1,1},{4,4}}}}},
+{"Should locate words written bottom right to top left",
+tenlinegrid, langs[1..6],{0,{{{1,10},{7,10}},{{6,5},{1,5}},{{10,1},{10,10}},{{9,5},{9,2}},{{1,1},{4,4}},{{8,9},{6,7}}}}},
+{"Should locate words written bottom left to top right",
+tenlinegrid, langs[1..7],{0,{{{1,10},{7,10}},{{6,5},{1,5}},{{10,1},{10,10}},{{9,5},{9,2}},{{1,1},{4,4}},{{8,9},{6,7}},{{3,6},{6,3}}}}},
+{"Should locate words written top right to bottom left",
+tenlinegrid, langs[1..8],{0,{{{1,10},{7,10}},{{6,5},{1,5}},{{10,1},{10,10}},{{9,5},{9,2}},{{1,1},{4,4}},{{8,9},{6,7}},{{3,6},{6,3}},{{8,6},{5,9}}}}},
+{"Should fail to locate a word that is not in the puzzle",
+tenlinegrid, langs,      {1,{{{1,10},{7,10}},{{6,5},{1,5}},{{10,1},{10,10}},{{9,5},{9,2}},{{1,1},{4,4}},{{8,9},{6,7}},{{3,6},{6,3}},{{8,6},{5,9}},{{0,0},{0,0}}}}},
+{"Should locate words on horizontal, vertical and diagonal lines",
+{"abc", "def","ghi"}, {"fed","heb","aei","iea","gec","ceg"},{0,{{{3,2},{1,2}},{{2,3},{2,1}},{{1,1},{3,3}},{{3,3},{1,1}},{{1,3},{3,1}},{{3,1},{1,3}}}}},
+{"Should fail to locate words that are not on horizontal, vertical, or diagonal lines",
+{"abc", "def","ghi"}, {"aef", "ced", "abf", "cbd"},{4,{{{0,0},{0,0}},{{0,0},{0,0}},{{0,0},{0,0}},{{0,0},{0,0}}}}},
+{"Should not concatenate different lines to find a horizontal word",
+{"abceli", "xirdfg"}, {"elixir"},{1,{{{0,0},{0,0}}}}},
+{"Should not wrap around horizontally to find a word",
+{"silabcdefp"}, {"lisp"},{1,{{{0,0},{0,0}}}}},
+{"Should not wrap around vertically to find a word",
+{"s", "u", "r", "a", "b", "c", "t"}, {"rust"},{1,{{{0,0},{0,0}}}}},
+}
+
+for i,t in tests do
+    sequence {desc, grid, words, expected} = t
+    test_equal(locate(words,grid),expected,desc)
+end for
+test_summary()
+

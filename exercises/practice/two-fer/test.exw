@@ -1,0 +1,13 @@
+include two-fer.e
+
+--<do not edit>
+--ignore canonical_data.e
+--</do not edit>
+
+set_test_verbosity(TEST_SHOW_ALL)
+
+test_equal(two_fer(), "One for you, one for me.", "no name given")
+test_equal(two_fer("Alice"), "One for Alice, one for me.", "a name given")
+test_equal(two_fer("Bob"), "One for Bob, one for me.", "another name given")
+
+test_summary()

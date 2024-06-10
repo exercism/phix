@@ -831,6 +831,102 @@
         "practices": [],
         "prerequisites": [],
         "difficulty": 5
+      },
+      {
+        "slug": "tournament",
+        "name": "Tournament",
+        "uuid": "3ac9a472-6112-4081-a5f8-b128e69ad058",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "transpose",
+        "name": "Transpose",
+        "uuid": "2abb1587-d181-41d8-889e-8c617e316e5a",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 4
+      },
+      {
+        "slug": "triangle",
+        "name": "Triangle",
+        "uuid": "72f20699-9260-4afa-901d-55e33efe3994",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "twelve-days",
+        "name": "Twelve Days",
+        "uuid": "9829b1c0-f425-4810-bbc6-373fee30ad0b",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "two-bucket",
+        "name": "Two Bucket",
+        "uuid": "44652c3c-584a-44a7-93a1-784992d00ae7",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "two-fer",
+        "name": "Two-Fer",
+        "uuid": "1b75bbbc-3b39-4c0b-9124-1ff268d51abf",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 2
+      },
+      {
+        "slug": "variable-length-quantity",
+        "name": "Variable Length Quantity",
+        "uuid": "6e4d3336-5114-427c-bf49-f38086fde59a",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "word-count",
+        "name": "Word Count",
+        "uuid": "3475ab5d-9067-4a1f-adec-d7ebb5509948",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 3
+      },
+      {
+        "slug": "word-search",
+        "name": "Word Search",
+        "uuid": "c1e0b196-2121-463d-97e0-865414a41b6b",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 4
+      },
+      {
+        "slug": "wordy",
+        "name": "Wordy",
+        "uuid": "15253343-ca30-41ad-a0d4-4f6480b94d8c",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 4
+      },
+      {
+        "slug": "yacht",
+        "name": "Yacht",
+        "uuid": "e3c867cc-fd9b-40a8-b925-cd2c9dc011e0",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 5
+      },
+      {
+        "slug": "zebra-puzzle",
+        "name": "Zebra Puzzle",
+        "uuid": "2537bc29-1184-442c-b146-fff3657b5c44",
+        "practices": [],
+        "prerequisites": [],
+        "difficulty": 8
       }
     ]
   },
