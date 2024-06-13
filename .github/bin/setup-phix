@@ -4,7 +4,7 @@
 
 mkdir -p phix
 rm -r phix
-# streamline: exercism has no suse for bench/, demo/, or docs/
+# streamline: exercism has no use for bench/, demo/, or docs/
 wget "http://phix.x10.mx/phix.${PHIX_VERSION}a.zip"
 #wget "http://phix.x10.mx/phix.${PHIX_VERSION}.1.zip"
 #wget "http://phix.x10.mx/phix.${PHIX_VERSION}.2.zip"
