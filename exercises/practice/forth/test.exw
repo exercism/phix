@@ -1,4 +1,4 @@
-include forth.e 
+﻿include forth.e 
 
 --<do not edit>
 constant canonical_data = {
@@ -64,6 +64,21 @@ constant extra_tests = {
 {{": + * ; 3 4 +"},{12},"","two instructions on one line[4]"},
 {{": foo 5 ; : bar foo ; : foo 6 ; bar foo"},{5,6},"","four instructions on one line"},
 {{": foo 10 ;",": foo foo 1 + ;","foo"},{11},"","three instructions on one line[2]"}}
+-- todo/see also https://forum.exercism.org/t/forth-test-suite-may-not-be-complete/11676
+--/*
+Solution        Incorrect Forth input                   Expected output     Current output      Comment
+glennj          : toto b ;                              Unknown command     []                  Use of unknown symbol b
+dav0p           : toto 1 ; : b toto ; : toto 2 ; b      [1]                 []                  Re-define symbol should not override existing symbol
+anurat          : toto 2 ; toto                         [2]                 Unknown command     Simple define and use of a value
+cjvolkert       : toto 2 ; toto                         [2]                 []                  Simple define and use of a value
+cjvolkert       : toto 1 ; toto +                       [2]                 []                  “Complex program” that add 1 to the stack, creates toto, then add toto to the stack
+
+On top of my head I recall the following missing correctness:
+
+It is possible to have multiple instructions on 1 line
+It is possible to re-define operators, the following program will have the stack [0]:
+: + - ; 1 1 +
+--*/
 
 set_test_verbosity(TEST_SHOW_ALL)
 for tset in {canonical_data,extra_tests} do
