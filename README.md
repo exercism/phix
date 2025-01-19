@@ -1,6 +1,7 @@
 # Exercism Phix Track
 
-[![configlet](https://github.com/exercism/phix/workflows/configlet/badge.svg)](https://github.com/exercism/phix/actions?query=workflow%3Aconfiglet) [![tests](https://github.com/exercism/phix/workflows/test/badge.svg)](https://github.com/exercism/phix/actions?query=workflow%3Atest)
+[![configlet](https://github.com/exercism/phix/workflows/configlet/badge.svg)](https://github.com/exercism/phix/actions?query=workflow%3Aconfiglet) 
+[![tests](https://github.com/exercism/phix/workflows/test/badge.svg)](https://github.com/exercism/phix/actions?query=workflow%3Atest)
 
 Exercism exercises in Phix.
 
