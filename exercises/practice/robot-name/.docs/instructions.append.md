@@ -1,3 +1,5 @@
+# Instructions append
+
 # Stress test
 
 Test 8 seeks to prove unique names are generated for all 676,000 robots, but gives up after 5s.

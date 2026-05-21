@@ -20,6 +20,7 @@ constant canonical_data_hand_modified = {
 {{},1,-1,"nothing is found in an empty array"},
 // I really don't understand what this means...
 {{1,2},0,-1,"nothing is found when the left and right bounds cross"},
+{{20,40,60,80},50,-3,"a value not in the array is not found"},
 }
 
 set_test_verbosity(TEST_SHOW_ALL)

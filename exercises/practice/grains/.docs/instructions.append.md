@@ -1,3 +1,5 @@
+# Instructions append
+
 # Numbers in Phix
 
 There are two data types in Phix to hold numbers, integer and atom.
