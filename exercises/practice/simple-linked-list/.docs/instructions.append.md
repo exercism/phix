@@ -1,6 +1,6 @@
 # Instructions append
 
-## Implementation
+## Track specific instructions
 
 Phix does not really have pointers, because it doesn't need them.
 The sequence type should always be your first thought when thinking about storing data (graduating to in-memory dictionaries, and on-disk databases as required), and in fact they are quite likely to outclass more traditionally taught linked lists in maybe 99% of all cases.
