@@ -17,6 +17,6 @@ A 32-bit version of Phix remains vital for adequate testing on desktop/Phix prio
 
 The precise limits of what can be held in Phix integers and atoms is of course futher detailed in the [manual][manual].
 
-[mpfr]: http://phix.x10.mx/docs/html/mpfr.htm
-[manual]: http://phix.x10.mx/docs/html/atoms.htm
+[mpfr]: https://phix.x10.mx/docs/html/mpfr.htm
+[manual]: https://phix.x10.mx/docs/html/atoms.htm
 

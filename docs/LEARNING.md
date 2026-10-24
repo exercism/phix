@@ -13,9 +13,9 @@ Phix has a wide variety of resources to help both experienced programmers and be
 Phix is closely related to Euphoria, although their implementations share not one line of code, at least that is if you ignore the handful of
 written-in-Phix and written-in-Euphoria standard library components. The [learning resources for that][eul] may also be helpful.
 
- [documentation]: http://phix.x10.mx/docs/html/phix.htm
+ [documentation]: https://phix.x10.mx/docs/html/phix.htm
  [rosettacode]: https://rosettacode.org/wiki/Category:Phix
  [basic]: https://rosettacode.org/wiki/Category:Phix/basics
- [pcan]: http://phix.x10.mx/pmwiki/pmwiki.php
+ [pcan]: https://phix.x10.mx/pmwiki/pmwiki.php
  [forum]: https://openeuphoria.org/forum/index.wc
  [eul]: https://exercism.org/docs/tracks/euphoria/learning

@@ -25,5 +25,5 @@ Effectively a mirror of the [Euphoria archive][archive], from the earliest days 
 [forum]: https://openeuphoria.org/forum/index.wc
 [basic]: https://rosettacode.org/wiki/Category:Phix/basics
 [github]: https://github.com/petelomax/Phix
-[pcan]: http://phix.x10.mx/pmwiki/pmwiki.php
-[archive]: http://rapideuphoria.com/archive.htm
+[pcan]: https://phix.x10.mx/pmwiki/pmwiki.php
+[archive]: https://rapideuphoria.com/archive.htm
