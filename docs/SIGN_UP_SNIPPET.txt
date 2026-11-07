@@ -1,0 +1,14 @@
+function most_common_word(string text)
+    integer counts = new_dict()
+    string best = ""
+    integer best_count = 0
+    for word in split(lower(text)) do
+        integer n = getd(word,counts)+1
+        setd(word,n,counts)
+        if n>best_count then
+            best = word
+            best_count = n
+        end if
+    end for
+    return sprintf(`"%s" appears %d times`,{best,best_count})
+end function
